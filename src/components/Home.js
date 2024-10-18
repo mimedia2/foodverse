@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import Footer from "../Layout/Footer";
+
 function Home() {
   const cuisines = [
     { name: "Biryani", img: "./img/biryani.jpg" },
@@ -13,10 +14,27 @@ function Home() {
     { name: "Burger", img: "./img/burgerR.png" },
   ];
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const ads = [
+    { src: './img/Add1.jpg', alt: 'Ad 1' },
+    { src: './img/Add2.jpg', alt: 'Ad 2' },
+    { src: './img/Add1.jpg', alt: 'Ad 3' },
+    { src: './img/Add2.jpg', alt: 'Ad 4' },
+
+  ];
+
+  const nextSlide = () => {
+    setCurrentIndex((currentIndex + 1) % ads.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((currentIndex - 1 + ads.length) % ads.length);
+  };
+
   return (
     <>
       {/* Header section */}
-      <header className=" bg-gradient-to-r from-purple-600 to-blue-600 p-4 pb-8 px-4 flex items-center justify-between">
+      <header className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 pb-8 px-4 flex items-center justify-between">
         <div className="flex items-center">
           {/* Location Icon */}
           <svg
@@ -31,14 +49,14 @@ function Home() {
               clipRule="evenodd"
             ></path>
           </svg>
-          <div className="ml-2 text-white text-sm ">
+          <div className="ml-2 text-white text-sm">
             <span className="block">Kamalnagar, Lakshmipur, Bangladesh</span>
           </div>
         </div>
         {/* Notification Icon */}
         <div>
           <svg
-            className="w-6 h-6 static top-0  text-white"
+            className="w-6 h-6 static top-0 text-white"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -53,18 +71,18 @@ function Home() {
           </svg>
         </div>
       </header>
-      {/* SerachBar */}
+      
+      {/* SearchBar */}
       <section className="relative">
         <div className="absolute -top-6 w-full px-4">
           <Link to="/SearchBar">
             <input
               type="text"
-              className="w-full shadow-md rounded-full pl-10 pr-4 py-3 text-blue-600 
-          placeholder-blue-700 bg-white focus:outline-none"
+              className="w-full shadow-md rounded-full pl-10 pr-4 py-3 text-blue-600 placeholder-blue-700 bg-white focus:outline-none"
               placeholder="Are you hungry !!"
             />
             <svg
-              className="absolute left-7 top-3 w-5 h-5 text-purple-600 "
+              className="absolute left-7 top-3 w-5 h-5 text-purple-600"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -76,20 +94,48 @@ function Home() {
               ></path>
               <path
                 fillRule="evenodd"
-                d="M14.293 14.293a1 1 0 011.414 0l2.5 2.5a1 1 0 01-1.414 1.414l-2.5-2.5a1 1 0 
-            010-1.414z"
+                d="M14.293 14.293a1 1 0 011.414 0l2.5 2.5a1 1 0 01-1.414 1.414l-2.5-2.5a1 1 0 010-1.414z"
                 clipRule="evenodd"
               ></path>
             </svg>
           </Link>
         </div>
       </section>
-      {/* Popular cousins */}
-      <section className="p-3 mt-6">
+      
+      {/* Slider section */}
+      <section className="p-3 mt-3">
+        <div className="relative w-full max-w-lg mx-auto mt-6 overflow-hidden rounded-lg shadow-lg ">
+          <div
+            className="flex transition-transform duration-500"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          >
+            {ads.map((ad, index) => (
+              <div key={index} className="min-w-full">
+                <img src={ad.src} alt={ad.alt} className="w-full rounded-lg" />
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={prevSlide}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-80 text-white p-2 rounded-full"
+          >
+            &#10094;
+          </button>
+
+          <button
+            onClick={nextSlide}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-80 text-white p-2 rounded-full"
+          >
+            &#10095;
+          </button>
+        </div>
+      </section>
+      
+      {/* Popular cuisines */}
+      <section className="p-3 ">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-purple-600">
-            Popular Cuisines
-          </h2>
+          <h2 className="text-2xl font-semibold text-purple-600">Popular Cuisines</h2>
           <Link to="" className="text-blue-600 font-semibold hover:underline">
             See All
           </Link>

@@ -74,7 +74,9 @@ function App() {
                 </>
               }
             />
-            <Route path="/about" element={<PrivateRoute element={About} />} />
+            <Route path="/about" 
+              element={<PrivateRoute element={About} />} 
+            />
             <Route
               path="/profile"
               element={<PrivateRoute element={Profile} />}

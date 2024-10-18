@@ -19,7 +19,7 @@ export default function MenuCard({ detail }) {
       <div className="flex items-center justify-between px-2">
         <p className="line-through text-orange-500 text-sm">TK {detail?.basedPrice}</p>
         <p className="text-gray-600 my-1 font-extrabold">
-          TK {detail?.offerPrice}
+          TK {detail?.offerPrice} 
         </p>
 
         {/* <div className="flex items-center justify-between">
