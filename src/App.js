@@ -22,12 +22,14 @@ import DeliverymanRegistration from "./components/DeliverymanRegistration";
 import AddressManager from "./components/AddressManager";
 import "./App.css";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <AuthProvider>
-      <ToastContainer position="top-right" theme="dark"/>
+      <ToastContainer position="top-right" theme="dark" />
+      <Toaster />
       <Router>
         <div className="App">
           <Routes>
@@ -74,9 +76,7 @@ function App() {
                 </>
               }
             />
-            <Route path="/about" 
-              element={<PrivateRoute element={About} />} 
-            />
+            <Route path="/about" element={<PrivateRoute element={About} />} />
             <Route
               path="/profile"
               element={<PrivateRoute element={Profile} />}
