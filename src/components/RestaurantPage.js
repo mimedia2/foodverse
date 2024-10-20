@@ -32,9 +32,11 @@ const RestaurantPage = () => {
   }, []);
 
   return (
-    <div className="p-4 bg-gradient-to-r from-purple-200 to-blue-200">
+    <div>
+
+      <div className='bg-gradient-to-r from-purple-200 to-blue-200 w-full fixed z-10'>
       {/* Header Section */}
-      <header className="bg-white p-4 rounded-lg shadow-lg flex items-center justify-between">
+      <header className="bg-white p-4 m-4 -mb-4 rounded-lg shadow-lg flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <img
             src="img/burger.png"
@@ -53,9 +55,10 @@ const RestaurantPage = () => {
           </div>
         </div>
       </header>
-
+      </div>
+      <div className="p-4 bg-gradient-to-r from-purple-200 to-blue-200">
       {/* Delivery Info Section */}
-      <section className="bg-white mt-4 p-4 rounded-lg shadow-lg">
+      <section className="bg-white mt-32 p-4 rounded-lg shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <svg
@@ -96,6 +99,7 @@ const RestaurantPage = () => {
       </section>
 
       <Footer />
+    </div>
     </div>
   );
 };
