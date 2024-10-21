@@ -14,9 +14,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Footer from "./Layout/Footer";
 import SearchBar from "./components/SearchBar";
 import RestaurantPage from "./components/RestaurantPage";
-import RestaurantOwnerPage from "./components/RestaurantOwnerPage";
 import RestaurantForm from "./components/RestaurantForm";
-import RestaurantAccount from "./components/RestaurantAccount";
 import LiveChat from "./components/LiveChat";
 import DeliverymanRegistration from "./components/DeliverymanRegistration";
 import AddressManager from "./components/AddressManager";
@@ -34,7 +32,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/signin" element={<SignIn />} />
-
+            <></>
             {/* Protected Routes */}
             <Route
               path="/favorites"
@@ -90,16 +88,8 @@ function App() {
               element={<PrivateRoute element={RestaurantPage} />}
             />
             <Route
-              path="/restaurantownerpager"
-              element={<PrivateRoute element={RestaurantOwnerPage} />}
-            />
-            <Route
               path="/restaurantform"
               element={<PrivateRoute element={RestaurantForm} />}
-            />
-            <Route
-              path="/restaurantaccount"
-              element={<PrivateRoute element={RestaurantAccount} />}
             />
             <Route
               path="/liveChat"

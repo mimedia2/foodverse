@@ -28,7 +28,7 @@ function Cart() {
   const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
-    <div className="p-4">
+    <div className="">
       {/* Header */}
       <header className="bg-gradient-to-r from-purple-200 to-blue-200 p-4 w-full fixed top-0 left-0">
         <div className="flex flex-col items-center mb-2 mt-2 justify-between">
@@ -46,6 +46,7 @@ function Cart() {
             <div className="ml-3 flex-grow">
               <h3 className="font-semibold text-gray-800">{item.name}</h3>
               <p className="text-gray-800">TK {item.price}</p>
+
             </div>
             <div className="flex items-center space-x-2">
               <button className=" text-gray-500 rounded-full w-8 h-8 flex items-center justify-center" onClick={() => handleDecrease(item.id)}>
@@ -64,12 +65,24 @@ function Cart() {
           </div>
         ))}
 
-        <div className='flex flex-row items-center text-blue-600 font-bold text-xl ' >
-            <svg className="w-10 h-10 pr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-            <p >Add more items</p>
+        <div className='flex items-center justify-center text-blue-600 font-bold text-xl'>
+          <svg
+             className="w-10 h-10 pr-2"
+             xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             >
+             <path
+             stroke-linecap="round"
+              stroke-linejoin="round"
+             d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+             />
+          </svg>
+          <p>Add more items</p>
         </div>
+
 
         {/* You May Also Like */}
         <div className="mt-8">
@@ -112,7 +125,7 @@ function Cart() {
             <p>TK 0.00</p>
         </div>
         </div>
-        <div className="fixed w-full bottom-0 left-0 bg-white z-50 px-8 pb-8">
+        <div className="fixed w-full bottom-0 left-0 bg-white z-50 px-4 pb-4">
           <div className="flex justify-between py-2 font-bold text-xl border-t-2 text-blue-600">
             <p>Subtotal</p>
             <p>TK {totalPrice}</p>

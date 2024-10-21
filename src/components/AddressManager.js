@@ -3,8 +3,7 @@ import { LoadScript, GoogleMap } from "@react-google-maps/api";
 import axios from 'axios'; // Import axios
 
 const AddressManager = () => {
-  const initialAddresses = JSON.parse(localStorage.getItem("addresses")) || [];
-  const [addresses, setAddresses] = useState(initialAddresses);
+  const [addresses, setAddresses] = useState([]);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [newAddress, setNewAddress] = useState({
     label: "Home",
@@ -17,6 +16,25 @@ const AddressManager = () => {
   const mapRef = useRef(null);
 
   const mapStyles = { height: "300px", width: "100%" };
+
+  // Fetch addresses from backend when the component mounts
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      const userId = localStorage.getItem('userId'); // Assuming the userId is still stored in local storage
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/get-addresses?id=${userId}`, {
+          headers: {
+            'x-auth-token': process.env.REACT_APP_API_TOKEN,
+          },
+        });
+        setAddresses(response.data.addresses || []); // Set addresses from API response
+      } catch (error) {
+        console.error("Error fetching addresses", error);
+      }
+    };
+
+    fetchAddresses();
+  }, []);
 
   const onMapLoad = (mapInstance) => {
     mapRef.current = mapInstance;
@@ -52,9 +70,18 @@ const AddressManager = () => {
     document.getElementById("map").appendChild(centerMarker);
   };
 
-  // API request to update address
-  const token = process.env.REACT_APP_API_TOKEN; // Access token from .env file
+  const resetNewAddress = () => {
+    setNewAddress({
+      label: "Home",
+      lat: 22.944039,
+      lng: 90.833783,
+      address: "",
+      name: "",
+      phone: "",
+    });
+  };
 
+  // API request to update address
   const updateUserAddress = async (updatedAddresses) => {
     const userId = localStorage.getItem('userId');  // Get user ID from local storage
 
@@ -70,7 +97,7 @@ const AddressManager = () => {
         },
         {
           headers: {
-            'x-auth-token': token,  // Use 'x-auth-token' header
+            'x-auth-token': process.env.REACT_APP_API_TOKEN,
             'Content-Type': 'application/json',
           },
         }
@@ -81,68 +108,31 @@ const AddressManager = () => {
     }
   };
 
-  // Save address to state, localStorage, and API
-  const saveAddress = (e) => {
-    e.preventDefault();
-    const updatedAddresses = [...addresses, newAddress];
-    setAddresses(updatedAddresses);
-    localStorage.setItem("addresses", JSON.stringify(updatedAddresses)); // Save to localStorage
-    setShowAddressForm(false);
-    resetNewAddress(); // Reset form values
-    updateUserAddress(updatedAddresses); // Call API to update the address
-  };
-
-  const resetNewAddress = () => {
-    setNewAddress({
-      label: "Home",
-      lat: 22.944039,
-      lng: 90.833783,
-      address: "",
-      name: "",
-      phone: "",
-    });
-  };
-
-  const deleteAddress = (index) => {
-    const updatedAddresses = addresses.filter((_, i) => i !== index);
-    setAddresses(updatedAddresses);
-    localStorage.setItem("addresses", JSON.stringify(updatedAddresses));
-  };
-
-  useEffect(() => {
-    if (showAddressForm) {
-      mapRef.current = null;
-    }
-  }, [showAddressForm]);
-
   const renderIcon = (label) => {
     switch (label) {
       case "Home":
-        return (
-          <svg 
-          className="h-5 w-5 text-purple-700"
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 24 24" 
-          fill="currentColor" 
-          >
-          <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
-          <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
-          </svg>
-        );
+        return <svg 
+        className="h-5 w-5 text-purple-700"
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 24 24" 
+        fill="currentColor" 
+        >
+        <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
+        <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
+        </svg>;
+
       case "Office":
-        return (
-          <svg
+        return <svg
             className="h-5 w-5 text-purple-700"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
           >
             <path fillRule="evenodd" d="M4.5 2.25a.75.75 0 0 0 0 1.5v16.5h-.75a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 0-1.5h-.75V3.75a.75.75 0 0 0 0-1.5h-15ZM9 6a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5H9Zm-.75 3.75A.75.75 0 0 1 9 9h1.5a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM9 12a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5H9Zm3.75-5.25A.75.75 0 0 1 13.5 6H15a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75ZM13.5 9a.75.75 0 0 0 0 1.5H15A.75.75 0 0 0 15 9h-1.5Zm-.75 3.75a.75.75 0 0 1 .75-.75H15a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75ZM9 19.5v-2.25a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-.75.75h-4.5A.75.75 0 0 1 9 19.5Z" clipRule="evenodd" />
-          </svg>
-        );
+          </svg>;
+
       case "Others":
-        return (
-          <svg
+        return <svg
             className="h-5 w-5 text-purple-700"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -150,10 +140,50 @@ const AddressManager = () => {
           >
             <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" 
             clipRule="evenodd" />
-          </svg>
-        );
+          </svg>;
+          
       default:
         return null;
+    }
+  };
+  
+  
+  const deleteAddress = (label) => {
+    const updatedAddresses = addresses.filter(addr => addr.label !== label);
+    setAddresses(updatedAddresses);
+    localStorage.setItem("addresses", JSON.stringify(updatedAddresses)); // Update localStorage
+  
+    // Optionally update the backend API as well
+    updateUserAddress(updatedAddresses);
+  };
+  
+
+  const saveAddress = (e) => {
+    e.preventDefault();
+
+    const existingAddress = addresses.find(addr => addr.label === newAddress.label);
+
+    if (existingAddress) {
+      const confirmEdit = window.confirm(`You have already set a ${newAddress.label} address. Do you want to edit it instead?`);
+      
+      if (confirmEdit) {
+        const updatedAddresses = addresses.map(addr => 
+          addr.label === newAddress.label ? newAddress : addr
+        );
+        setAddresses(updatedAddresses);
+        updateUserAddress(updatedAddresses); // Send update to server
+        resetNewAddress(); // Reset form
+        setShowAddressForm(false);
+      }
+    } else if (addresses.length < 3) {
+      // Add a new address only if it's less than 3
+      const updatedAddresses = [...addresses, newAddress];
+      setAddresses(updatedAddresses);
+      updateUserAddress(updatedAddresses); // Send new address to server
+      resetNewAddress(); // Reset form
+      setShowAddressForm(false);
+    } else {
+      alert("You can only set 3 addresses (Home, Office, Others).");
     }
   };
 
@@ -299,3 +329,5 @@ const AddressManager = () => {
 };
 
 export default AddressManager;
+
+/*   */
