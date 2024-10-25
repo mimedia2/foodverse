@@ -4,6 +4,7 @@ import { useCartContext } from "../contexts/CartContext";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { api_path_url, authToken } from "../secret";
 import YouMayAlsoLikeCard from "./YouMayAlsoLikeCard";
+import Loading from "./Loading";
 
 function Cart() {
   const {
@@ -14,6 +15,9 @@ function Cart() {
     handleRemoveItem,
   } = useCartContext();
 
+  // loading
+  const [loading, setLoading] = useState(false);
+
   // special discount
   const [discount, setDiscount] = useState(50);
   const [alsoLike, setAlsoLike] = useState(null);
@@ -22,6 +26,7 @@ function Cart() {
     const cartRest = localStorage.getItem("cartRest");
     console.log(cartRest);
     async function handleFetchAlsoLike() {
+      setLoading(true);
       try {
         const apiResponse = await fetch(
           `${api_path_url}/menu/you-may-like?restaurant-id=${cartRest}`,
@@ -35,10 +40,11 @@ function Cart() {
 
         const result = await apiResponse.json();
         if (result?.success) {
-          console.log(result?.items);
+          setLoading(false);
           setAlsoLike(result?.items);
         }
       } catch (error) {
+        setLoading(false);
         console.log(error);
         throw new Error("There is an error: ", error.message);
       }
@@ -78,7 +84,9 @@ function Cart() {
               />
               <div className="ml-3 flex-grow">
                 <h3 className="font-semibold text-gray-800">{item.name}</h3>
-                <p className="text-gray-800">TK {item.price}</p>
+                <p className="text-gray-800">
+                  TK {item.offerPrice * item.quantity}
+                </p>
               </div>
               <div className="flex items-center space-x-2">
                 <button
@@ -122,26 +130,20 @@ function Cart() {
 
         {/* You May Also Like */}
 
+        {loading ? (
+          <div className="w-full flex items-center justify-center my-4">
+            <Loading />
+          </div>
+        ) : null}
+
         {cart.length > 0 ? (
           <>
-            <div className="flex items-center justify-center text-blue-600 font-bold text-xl">
-              <svg
-                className="w-10 h-10 pr-2"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                />
-              </svg>
+            <div className="flex items-center flex-col justify-center text-blue-600 font-bold text-xl">
               <p>Add more items</p>
+              <h1 className="text-center font-bold text-lg">
+                You may also like
+              </h1>
             </div>
-            <h1 className="text-center font-bold text-lg">You may also like</h1>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               {alsoLike &&
                 alsoLike.map((item) => (
@@ -211,7 +213,7 @@ function Cart() {
             <p className="text-gray-600 mb-6">Please add items to the menu.</p>
 
             <Link
-              to="/menus"
+              to="/Favorites"
               className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-300"
             >
               Browse

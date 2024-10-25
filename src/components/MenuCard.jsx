@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCartContext } from "../contexts/CartContext";
 
-export default function MenuCard({ detail }) {
+export default function MenuCard({ detail, restaurant }) {
   const [showModal, setShowModal] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+
+  const [price, setPrice] = useState(quantity * detail?.offerPrice);
+
+  useEffect(() => {
+    setPrice(quantity * detail?.offerPrice);
+  }, [quantity]);
 
   const { handleAddToCart } = useCartContext();
 
@@ -23,7 +30,7 @@ export default function MenuCard({ detail }) {
         <img
           src={detail?.image || "/img/burger.png"}
           alt={detail?.name}
-          className="w-full h-32 sm:h-48 object-cover rounded-md"
+          className="max-w-32  h-32 sm:h-48 py-3 px-1 object-cover mx-auto block"
         />
         <h3 className="text-sm font-semibold text-gray-800 mx-2 mt-2">
           {detail?.name}
@@ -89,7 +96,7 @@ export default function MenuCard({ detail }) {
                   {detail?.name}
                 </h3>
                 <p className="text-blue-400 font-semibold pl-2 py-2 text-sm">
-                  Restaurant Name{detail?.restaurant}
+                  {restaurant.name}
                 </p>
                 <div className="flex items-center space-x-2 pl-2">
                   <svg
@@ -114,46 +121,36 @@ export default function MenuCard({ detail }) {
             <p className="text-gray-500 mt-1">{detail?.description}</p>
             <div className="flex items-center justify-between mt-4 border-t-2 pt-2 ">
               <p className="font-semibold mt-2">Total Amount:</p>
-              <p className="text-gray-800 font-bold">TK {detail?.offerPrice}</p>
+              <p className="text-gray-800 font-bold">TK {price}</p>
             </div>
 
             <div className="mt-4 flex flex-row items-center">
               <div className="flex flex-row items-center pr-2">
                 <span className="w-8 h-8 text-gray-700 ">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
+                  <button
+                    className="w-8 h-8 rounded-full border-2 border-blue-500 text-blue-500 "
+                    onClick={() => {
+                      if (quantity <= 1) return false;
+                      setQuantity((prev) => prev - 1);
+                    }}
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                    />
-                  </svg>
+                    -
+                  </button>
                 </span>
-                <span className="font-bold text-xl px-2">1</span>
+                <span className="font-bold text-xl px-2">{quantity}</span>
                 <span>
-                  <svg
-                    className="w-8 h-8 text-blue-500 "
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
+                  <button
+                    className="w-8 h-8 rounded-full bg-blue-500 text-white "
+                    onClick={() => setQuantity((prev) => prev + 1)}
                   >
-                    <path
-                      fill-rule="evenodd"
-                      d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
+                    +
+                  </button>
                 </span>
               </div>
               <button
                 className="bg-blue-500 w-full text-white py-2 rounded-lg"
                 onClick={() => {
-                  handleAddToCart({ ...detail, quantity: 3 });
+                  handleAddToCart({ ...detail, quantity: quantity });
                   setShowModal(false);
                 }}
               >

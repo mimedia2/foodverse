@@ -9,11 +9,11 @@ export default function YouMayAlsoLikeCard({ detail }) {
       <div className="flex space-x-4">
         <div className="w-40 bg-white p-2 rounded-lg shadow-md">
           <img
-            src="./img/burger.png"
+            src={detail.image || "./img/burger.png"}
             alt="Chicken Burger"
             className="w-full h-32 object-cover rounded-md"
           />
-          <p className="text-sm mt-2">Chicken Burger</p>
+          <p className="text-sm mt-2">{detail.name}</p>
           <div className="flex flex-row font-bold py-2">
             <svg
               className="w-4 h-4 text-purple-600 mr-1"
@@ -33,7 +33,7 @@ export default function YouMayAlsoLikeCard({ detail }) {
             <p className="text-gray-600 text-xs">4.3</p>
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-blue-600 font-bold">TK 150.00</p>
+            <p className="text-blue-600 font-bold">TK {detail.offerPrice}</p>
             <button
               className=""
               onClick={() => handleAddToCart({ ...detail, quantity: 1 })}

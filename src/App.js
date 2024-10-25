@@ -86,7 +86,7 @@ function App() {
                 element={<PrivateRoute element={SearchBar} />}
               />
               <Route
-                path="/menus"
+                path="/restaurant/:restaurantId"
                 element={<PrivateRoute element={RestaurantPage} />}
               />
               <Route
