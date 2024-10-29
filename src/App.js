@@ -23,6 +23,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CartProvider from "./contexts/CartContext";
 import { Toaster } from "react-hot-toast";
+import CuisineFilter from "./pages/CuisineFilter.jsx"
+import Header from "./components/Header.jsx"
 
 function App() {
   return (
@@ -57,6 +59,8 @@ function App() {
                   </>
                 }
               />
+
+              <Route path="/cuisine/:cuisine" element={<><Header title="filter cuisine" /> <CuisineFilter /> <Footer /></>} />
 
               <Route
                 path="/cart"

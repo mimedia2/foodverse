@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useCartContext } from "../contexts/CartContext";
 
-export default function MenuCard({ detail, restaurant }) {
+export default function MenuCard({ detail }) {
   const [showModal, setShowModal] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
@@ -96,7 +96,7 @@ export default function MenuCard({ detail, restaurant }) {
                   {detail?.name}
                 </h3>
                 <p className="text-blue-400 font-semibold pl-2 py-2 text-sm">
-                  {restaurant.name}
+                  
                 </p>
                 <div className="flex items-center space-x-2 pl-2">
                   <svg

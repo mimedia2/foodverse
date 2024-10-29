@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext"; // Import AuthContext
-import { toast } from "react-toastify";
+import Loading from "./Loading";
+import toast from "react-hot-toast";
 
 const SignInForm = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,8 @@ const SignInForm = () => {
     password: "",
     remember: false,
   });
+
+  const [loading, setLoading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -40,6 +43,7 @@ const SignInForm = () => {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     if (validateSignInForm()) {
       try {
@@ -62,13 +66,17 @@ const SignInForm = () => {
 
         if (data?.success) {
           localStorage.setItem("user", JSON.stringify(data));
-          toast(data?.message);
+          setLoading(false);
           navigate("/");
+          toast.success(data?.message);
         } else {
-          toast(data?.message);
+          toast.error(data?.message);
+          setLoading(false);
         }
       } catch (error) {
         console.error("Network error:", error);
+        toast.error("Network error. Please try again.");
+        setLoading(false);
         setErrorMessage("Network error. Please try again later.");
       }
     }
@@ -148,6 +156,15 @@ const SignInForm = () => {
           )}
 
           {/* Sign In Button */}
+
+          <div>
+            {loading ? (
+              <div className="w-fit mx-auto my-2 text-lg">
+                <Loading />{" "}
+              </div>
+            ) : null}
+          </div>
+
           <div>
             <button
               type="submit"
