@@ -25,6 +25,7 @@ import CartProvider from "./contexts/CartContext";
 import { Toaster } from "react-hot-toast";
 import CuisineFilter from "./pages/CuisineFilter.jsx"
 import Header from "./components/Header.jsx"
+import Restaurant from "./pages/Restaurant.jsx";
 
 function App() {
   return (
@@ -56,6 +57,17 @@ function App() {
                   <>
                     <PrivateRoute element={Home} />
                     <Footer />{" "}
+                  </>
+                }
+              />
+
+              <Route
+                path="/restaurant"
+                element={
+                  <>
+                    <Header title={"Restaurant"} />
+                    <Restaurant />
+                    <Footer />
                   </>
                 }
               />
