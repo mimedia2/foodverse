@@ -20,10 +20,6 @@ function Restaurant() {
     fetchRestaurant();
   }, []);
 
-  useEffect(() => {
-    console.log(allRestaurants);
-  }, [allRestaurants]);
-
   return (
     <div className="mb-24">
       <div className="pt-[75px]"></div>

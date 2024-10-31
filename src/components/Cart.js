@@ -5,6 +5,7 @@ import { FaDeleteLeft } from "react-icons/fa6";
 import { api_path_url, authToken } from "../secret";
 import YouMayAlsoLikeCard from "./YouMayAlsoLikeCard";
 import Loading from "./Loading";
+import Header from "./Header";
 
 function Cart() {
   const {
@@ -42,6 +43,8 @@ function Cart() {
         if (result?.success) {
           setLoading(false);
           setAlsoLike(result?.items);
+        }else {
+          setLoading(false);
         }
       } catch (error) {
         setLoading(false);
@@ -55,16 +58,10 @@ function Cart() {
   return (
     <div className="">
       {/* Header */}
-      <header className="bg-gradient-to-r from-purple-200 to-blue-200 p-4 w-full fixed top-0 left-0">
-        <div className="flex flex-col items-center mb-2 mt-2 justify-between">
-          <div className="w-full text-center">
-            <span className="font-bold text-blue-700">My Cart</span>
-          </div>
-        </div>
-      </header>
+      <Header title={"Cart"}/>
 
       {/* Cart Items */}
-      <div className="p-4 mt-20 space-y-4 ">
+      <div className="pt-20 space-y-4 ">
         {cart.length > 0 &&
           cart?.map((item) => (
             <div
