@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
-function CategoryCard() {
-  return (
-    <div>CategoryCard</div>
-  )
+function CategoryCard({category}) {
+  return <div>CategoryCard</div>;
 }
 
-export default CategoryCard
+export default CategoryCard;

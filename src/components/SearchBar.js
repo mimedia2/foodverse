@@ -1,13 +1,32 @@
-import React from "react";
-import { Link } from "react-router-dom"; 
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import handleApiRequest from "../helpers/handleApiRequest";
 
 const SearchPage = () => {
+  const [categories, setCategories] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      const apiResponse = await handleApiRequest("/category", {});
+      if (apiResponse?.result) {
+        setCategories(apiResponse.result);
+      } else {
+        setCategories(null);
+      }
+    }
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    console.log(categories);
+  }, [categories]);
+
   return (
     <div className="bg-blue-50">
       <div className="max-w-md mx-auto p-4">
         {/* Search Bar */}
         <div className="flex items-center space-x-2 mb-4 bg-white rounded-full shadow-md p-2">
-          <Link to='' className="p-2" >
+          <Link to="" className="p-2">
             <svg
               className="w-6 h-6 text-gray-500"
               xmlns="http://www.w3.org/2000/svg"
@@ -80,19 +99,18 @@ const SearchPage = () => {
         {/* Popular Categories Section */}
         <div>
           <h2 className="text-xl font-semibold mb-2">Popular Categories</h2>
+
           <div className="flex flex-wrap gap-2">
-            <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full shadow">
-              Burger
-            </button>
-            <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full shadow">
-              Chowmein
-            </button>
-            <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full shadow">
-              Fried Chickens
-            </button>
-            <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full shadow">
-              Set Menu
-            </button>
+            {categories?.map((category) => (
+              <>
+                <Link
+                  to={`/category/${category.name}`}
+                  className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full shadow"
+                >
+                  {category.name}
+                </Link>
+              </>
+            ))}
           </div>
         </div>
       </div>
