@@ -2,15 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api_path_url, authToken } from "../secret";
 import Footer from "../Layout/Footer";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const MainProfile = () => {
   const profile = [{ name: "Ibrahim", img: "./img/Ibrahimtest.jpg" }];
+
+  const [profileImage, setProfileImage] = useState(null);
 
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("user"));
-    
+
     async function fetchUserInformation() {
       try {
         const apiResponse = await fetch(
@@ -36,6 +40,40 @@ const MainProfile = () => {
     fetchUserInformation();
   }, []);
 
+  async function handleProfileImage(e) {
+    e.preventDefault();
+    const file = e.target.files[0];
+
+    if (!file) {
+      toast.error("Please select profile picture.");
+      return false;
+    }
+
+    if (window.confirm("are you sure to change profile picture?")) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const formData = new FormData();
+
+      formData.append("profileImage", file);
+
+      const response = await axios.put(
+        `${api_path_url}/user/update-profile-picture?id=${user.id}`,
+        formData,
+        {
+          headers: {
+            "x-auth-token": authToken,
+          },
+        }
+      );
+      const data = await response.data;
+
+      if (data?.success) {
+        toast.success(data.message);
+      } else {
+        toast.success(data.message);
+      }
+    }
+  }
+
   return (
     <div className="bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center min-h-screen p-4">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-sm">
@@ -43,6 +81,20 @@ const MainProfile = () => {
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 py-6 px-6">
           <div className="flex justify-center">
             <div className="relative">
+              <form method="post" encType="multipart/form-data">
+                <label
+                  className="absolute top-0 left-0 w-full h-full"
+                  htmlFor="profileImage"
+                ></label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="profileImage"
+                  name="profileImage"
+                  hidden
+                  onChange={handleProfileImage}
+                />
+              </form>
               <img
                 className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
                 src={user?.profileImage}

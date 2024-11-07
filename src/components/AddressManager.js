@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { LoadScript, GoogleMap } from "@react-google-maps/api";
 import axios from "axios"; // Import axios
+import { api_path_url, authToken } from "../secret";
+import toast from "react-hot-toast";
 
 const AddressManager = () => {
   const [addresses, setAddresses] = useState([]);
@@ -116,7 +118,13 @@ const AddressManager = () => {
           },
         }
       );
-      console.log("Address updated successfully:", response.data);
+      const data = await response.data;
+
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
       console.error("Error updating address:", error);
     }
@@ -174,13 +182,24 @@ const AddressManager = () => {
     }
   };
 
-  const deleteAddress = (label) => {
-    const updatedAddresses = addresses.filter((addr) => addr.label !== label);
-    setAddresses(updatedAddresses);
-    localStorage.setItem("addresses", JSON.stringify(updatedAddresses)); // Update localStorage
+  const deleteAddress = async (label) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const apiResponse = await axios.delete(
+      `${api_path_url}/user/delete-address?id=${user.id}&label=${label}`,
+      {
+        headers: {
+          "x-auth-token": authToken,
+        },
+      }
+    );
 
-    // Optionally update the backend API as well
-    updateUserAddress(updatedAddresses);
+    const data = await apiResponse.data;
+
+    if (data.success) {
+      toast.success(data.message);
+    } else {
+      toast.error(data.message);
+    }
   };
 
   const saveAddress = (e) => {
@@ -281,7 +300,10 @@ const AddressManager = () => {
                       >
                         Edit
                       </button>
-                      <button className="text-white bg-red-500 rounded-sm font-bold px-2">
+                      <button
+                        className="text-white bg-red-500 rounded-sm font-bold px-2"
+                        onClick={() => deleteAddress(addr?.label)}
+                      >
                         Delete
                       </button>
                     </div>

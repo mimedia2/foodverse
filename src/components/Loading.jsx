@@ -7,7 +7,7 @@ export default function Loading() {
       <OrbitProgress
         variant="spokes"
         color="#7048e8"
-        size="medium"
+        size="small"
         text=""
         textColor=""
       />
