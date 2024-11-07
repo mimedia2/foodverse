@@ -6,12 +6,12 @@ const AddressManager = () => {
   const [addresses, setAddresses] = useState([]);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [newAddress, setNewAddress] = useState({
-    label: "Home",
-    lat: 22.944039,
-    lng: 90.833783,
+    label: "home",
+    latitude: 22.944039,
+    longitude: 90.833783,
     address: "",
     name: "",
-    phone: "",
+    phoneNumber: "",
   });
   const mapRef = useRef(null);
 
@@ -35,10 +35,10 @@ const AddressManager = () => {
           // looping throw address
           const address = response.data.address;
           const arr = [];
+          // push address to address array.
           for (const key in address) {
             arr.push(address[key]);
           }
-
           setAddresses(arr);
         }
       } catch (error) {
@@ -47,6 +47,10 @@ const AddressManager = () => {
     };
     fetchAddresses();
   }, []);
+
+  useEffect(() => {
+    console.log(newAddress);
+  }, [newAddress]);
 
   const onMapLoad = (mapInstance) => {
     mapRef.current = mapInstance;
@@ -58,8 +62,8 @@ const AddressManager = () => {
       const center = mapRef.current.getCenter();
       setNewAddress((prev) => ({
         ...prev,
-        lat: center.lat(),
-        lng: center.lng(),
+        latitude: center?.lat(),
+        longitude: center?.lng(),
       }));
     }
   };
@@ -95,17 +99,15 @@ const AddressManager = () => {
 
   // API request to update address
   const updateUserAddress = async (updatedAddresses) => {
-    const userId = localStorage.getItem("userId"); // Get user ID from local storage
-
     try {
+      const userId = JSON.parse(localStorage.getItem("user"));
+      const id = userId.id;
+
+      console.log(newAddress);
       const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user/update-user?id=${userId}`,
+        `${process.env.REACT_APP_API_URL}/user/update-address?id=${id}`,
         {
-          address: {
-            home: updatedAddresses.find((addr) => addr.label === "Home"),
-            office: updatedAddresses.find((addr) => addr.label === "Office"),
-            others: updatedAddresses.find((addr) => addr.label === "Others"),
-          },
+          ...newAddress,
         },
         {
           headers: {
@@ -184,33 +186,22 @@ const AddressManager = () => {
   const saveAddress = (e) => {
     e.preventDefault();
 
-    const existingAddress = addresses.find(
-      (addr) => addr.label === newAddress.label
+    if (newAddress.label === undefined) {
+      alert("please select type of address.");
+    }
+
+    const confirmEdit = window.confirm(
+      `You have already set a ${newAddress.label} address. Do you want to edit it instead?`
     );
 
-    if (existingAddress) {
-      const confirmEdit = window.confirm(
-        `You have already set a ${newAddress.label} address. Do you want to edit it instead?`
+    if (confirmEdit) {
+      const updatedAddresses = addresses.map((addr) =>
+        addr.label === newAddress.label ? newAddress : addr
       );
-
-      if (confirmEdit) {
-        const updatedAddresses = addresses.map((addr) =>
-          addr.label === newAddress.label ? newAddress : addr
-        );
-        setAddresses(updatedAddresses);
-        updateUserAddress(updatedAddresses); // Send update to server
-        resetNewAddress(); // Reset form
-        setShowAddressForm(false);
-      }
-    } else if (addresses.length < 3) {
-      // Add a new address only if it's less than 3
-      const updatedAddresses = [...addresses, newAddress];
       setAddresses(updatedAddresses);
-      updateUserAddress(updatedAddresses); // Send new address to server
+      updateUserAddress(updatedAddresses); // Send update to server
       resetNewAddress(); // Reset form
       setShowAddressForm(false);
-    } else {
-      alert("You can only set 3 addresses (Home, Office, Others).");
     }
   };
 
@@ -228,7 +219,7 @@ const AddressManager = () => {
         <ul>
           {addresses &&
             addresses?.map((addr) => {
-              return (
+              return addr.label !== undefined ? (
                 <>
                   <div>
                     <h1>{addr?.label}</h1>
@@ -283,7 +274,10 @@ const AddressManager = () => {
                     <div className="flex flex-col">
                       <button
                         className="text-white bg-blue-500 rounded-sm font-bold mb-3"
-                        onClick={() => setShowAddressForm(true)}
+                        onClick={() => {
+                          setShowAddressForm(true);
+                          setNewAddress(() => ({ ...addr }));
+                        }}
                       >
                         Edit
                       </button>
@@ -293,7 +287,7 @@ const AddressManager = () => {
                     </div>
                   </li>
                 </>
-              );
+              ) : null;
             })}
         </ul>
         <button
@@ -311,27 +305,33 @@ const AddressManager = () => {
             <button
               type="button"
               className={`px-4 py-2 rounded-md ${
-                newAddress.label === "Home" ? "bg-blue-400" : "bg-gray-200"
+                newAddress.label === "home"
+                  ? "bg-blue-400 text-white"
+                  : "bg-gray-200"
               }`}
-              onClick={() => setNewAddress({ ...newAddress, label: "Home" })}
+              onClick={() => setNewAddress({ ...newAddress, label: "home" })}
             >
               Home
             </button>
             <button
               type="button"
               className={`px-4 py-2 rounded-md ${
-                newAddress.label === "Office" ? "bg-blue-400" : "bg-gray-200"
+                newAddress.label === "office"
+                  ? "bg-blue-400 text-white "
+                  : "bg-gray-200"
               }`}
-              onClick={() => setNewAddress({ ...newAddress, label: "Office" })}
+              onClick={() => setNewAddress({ ...newAddress, label: "office" })}
             >
               Office
             </button>
             <button
               type="button"
               className={`px-4 py-2 rounded-md ${
-                newAddress.label === "Others" ? "bg-blue-400" : "bg-gray-200"
+                newAddress.label === "others"
+                  ? "bg-blue-400 text-white"
+                  : "bg-gray-200"
               }`}
-              onClick={() => setNewAddress({ ...newAddress, label: "Others" })}
+              onClick={() => setNewAddress({ ...newAddress, label: "others" })}
             >
               Others
             </button>
@@ -351,8 +351,8 @@ const AddressManager = () => {
           <label className="block text-sm mb-2">Phone</label>
           <input
             type="text"
-            name="phone"
-            value={newAddress.phone}
+            name="phoneNumber"
+            value={newAddress.phoneNumber}
             onChange={handleInputChange}
             className="w-full border px-4 py-2 rounded-md mb-4"
             placeholder="Enter your phone number"
@@ -386,7 +386,7 @@ const AddressManager = () => {
           <div className="bg-white rounded-lg shadow-lg p-4 mt-4">
             <h2 className="text-lg font-semibold">Selected Coordinates:</h2>
             <p>
-              Latitude: {newAddress.lat}, Longitude: {newAddress.lng}
+              Latitude: {newAddress.latitude}, Longitude: {newAddress.longitude}
             </p>
           </div>
           <button
