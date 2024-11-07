@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import handleApiRequest from "../helpers/handleApiRequest";
+import MenuCard from "../components/MenuCard";
 
 export default function CategoryFilter() {
   const { category } = useParams();
@@ -29,6 +30,13 @@ export default function CategoryFilter() {
   return (
     <div>
       <div className="pt-24"></div>
+
+      <div className="max-w-[80%] mx-auto flex items-center justify-center gap-8">
+        {items &&
+          items.map((item) => {
+            return <MenuCard detail={item} key={item._id} />;
+          })}
+      </div>
     </div>
   );
 }
