@@ -81,7 +81,7 @@ function Home() {
               </svg>
             </div>
           </header>
-          
+
           {/* SearchBar */}
           <section className="relative">
             <div className="absolute -top-6 w-full px-4">
@@ -141,8 +141,8 @@ function Home() {
             </button>
           </div>
         </section>
-        
-        {/* Popular cuisines */} 
+
+        {/* Popular cuisines */}
         <section className="p-3">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-purple-600">Popular Cuisines</h2>
@@ -152,7 +152,7 @@ function Home() {
           </div>
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 lg:grid-cols-8 gap-2">
             {cuisines.map((cuisine, index) => (
-              <div key={index} className="flex flex-col items-center">
+              <Link to={`/cuisine/${cuisine.name}`} key={index} className="flex flex-col items-center">
                 <img
                   src={cuisine.img}
                   alt={cuisine.name}
@@ -161,7 +161,7 @@ function Home() {
                 <span className="mt-2 text-sm sm:text-base font-medium text-gray-700">
                   {cuisine.name}
                 </span>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
