@@ -53,7 +53,7 @@ const Profile = () => {
   return (
     <div className="bg-gradient-to-r from-purple-200 to-blue-200 min-h-screen">
       {/* Profile Section */}
-      <section id="profile-section" className="p-8 mb-16">
+      <section id="profile-section" className="p-8 pb-16">
         {/* ... other profile content ... */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 rounded-lg">
           <div className="flex items-center">
@@ -241,7 +241,6 @@ const Profile = () => {
           onConfirm={handleLogoutConfirm}
         />
       </section>
-      <Footer />
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api_path_url, authToken } from "../secret";
-import Footer from "../Layout/Footer";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -204,8 +203,6 @@ const MainProfile = () => {
           </Link>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

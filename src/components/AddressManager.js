@@ -240,10 +240,11 @@ const AddressManager = () => {
             addresses?.map((addr) => {
               return addr.label !== undefined ? (
                 <>
-                  <div>
-                    <h1>{addr?.label}</h1>
+                <div className="border-2 my-4 rounded-md ">
+                  <div className="flex flex-row justify-center items-center p-2 text-blue-600 bg-slate-100 ">
+                    <h1 className="font-bold">{addr?.label}</h1>
                   </div>
-                  <li className="flex justify-between items-center p-3 mb-3 border rounded-md shadow-md">
+                  <li className="flex flex-col justify-between items-center p-3  border rounded-md shadow-md ">
                     <div>
                       <div className="flex items-center space-x-2">
                         <svg
@@ -290,9 +291,9 @@ const AddressManager = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-row space-x-44 mt-2">
                       <button
-                        className="text-white bg-blue-500 rounded-sm font-bold mb-3"
+                        className="text-white bg-blue-500 rounded-sm font-bold px-2 "
                         onClick={() => {
                           setShowAddressForm(true);
                           setNewAddress(() => ({ ...addr }));
@@ -308,20 +309,23 @@ const AddressManager = () => {
                       </button>
                     </div>
                   </li>
+                  </div>
                 </>
               ) : null;
             })}
         </ul>
+        <div className="text-center">
         <button
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4"
+          className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 "
           onClick={() => setShowAddressForm(true)}
         >
           + Add Another Address
         </button>
+        </div>
       </div>
 
       {showAddressForm && (
-        <form onSubmit={saveAddress}>
+        <form onSubmit={saveAddress} className="border-2 p-2 my-4 rounded-md bg-gray-100 ">
           <label className="block text-sm mb-2">Label</label>
           <div className="flex space-x-4 mb-4">
             <button
@@ -391,7 +395,9 @@ const AddressManager = () => {
             placeholder="Enter address details"
             required
           />
-
+          <div className="text-center">
+            <button className="font-bold text-white bg-blue-500 p-2 rounded-md">Find location</button>
+          </div>
           {showAddressForm && (
             <LoadScript googleMapsApiKey="AIzaSyBbE_BV395ODtFKApBX_oK0KselqP0Tjcs">
               <GoogleMap
@@ -425,4 +431,3 @@ const AddressManager = () => {
 
 export default AddressManager;
 
-/*   */

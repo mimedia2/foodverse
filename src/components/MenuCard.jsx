@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useCartContext } from "../contexts/CartContext";
+import { HiOutlineHeart } from "react-icons/hi";
 
 export default function MenuCard({ detail }) {
   const [showModal, setShowModal] = useState(false);
@@ -24,14 +25,16 @@ export default function MenuCard({ detail }) {
   return (
     <>
       <div
-        className="bg-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition cursor-pointer"
+        className="bg-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transitioncursor-pointer relative "
         onClick={handleCardClick}
       >
         <img
           src={detail?.image || "/img/burger.png"}
           alt={detail?.name}
-          className="max-w-32  h-32 sm:h-48 py-3 px-1 object-cover mx-auto block"
+          className="w-full h-32 sm:h-48 md:h-56 lg:h-72 object-cover rounded-md"
         />
+        {/* Favourite */}
+          <HiOutlineHeart className="size-5 text-gray-500 absolute right-2 top-2 rounded-md"/>
         <h3 className="text-sm font-semibold text-gray-800 mx-2 mt-2">
           {detail?.name}
         </h3>

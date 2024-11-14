@@ -27,6 +27,7 @@ import CuisineFilter from "./pages/CuisineFilter.jsx";
 import Header from "./components/Header.jsx";
 import Restaurant from "./pages/Restaurant.jsx";
 import CategoryFilter from "./pages/CategoryFilter.jsx";
+import Checkout from "./components/Checkout.js"
 
 function App() {
   return (
@@ -138,6 +139,10 @@ function App() {
               <Route
                 path="/addressmanager"
                 element={<PrivateRoute element={AddressManager} />}
+              />
+              <Route
+                path="/checkout"
+                element={<PrivateRoute element={Checkout} />}
               />
             </Routes>
           </div>

@@ -23,15 +23,7 @@ function Restaurant() {
   return (
     <div className="mb-24">
       <div className="pt-[75px]"></div>
-      <div>
-        <img src="/img/restaurant-all.jpg" alt="restaurant" />
-      </div>
-      <div>
-        <h1 className="ml-3 py-2 font-bold text-2xl text-gray-500">
-          all restaurant
-        </h1>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-4 place-items-center px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-4 place-items-center p-4">
         {loading ? (
           <div className="w-full h-full flex items-center justify-center">
             <Loading />

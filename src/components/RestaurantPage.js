@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { api_path_url, authToken } from "../secret";
 import MenuCard from "./MenuCard";
-import Footer from "../Layout/Footer";
 import { useParams } from "react-router-dom";
 import Loading from "./Loading";
 
@@ -47,8 +46,8 @@ const RestaurantPage = () => {
   }, []);
 
   return (
-    <div>
-      <div className="bg-gradient-to-r from-purple-200 to-blue-200 w-full fixed z-10">
+    <div className="bg-gradient-to-r from-purple-200 to-blue-200 min-h-screen ">
+      <div className= "w-full fixed z-10">
         {/* Header Section */}
         <header className="bg-white p-4 m-4 -mb-4 rounded-lg shadow-lg flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -58,7 +57,7 @@ const RestaurantPage = () => {
               className="w-20 h-16 rounded-md object-cover shadow-md"
             />
             <div className="flex flex-col">
-              <h1 className="text-xl font-bold text-gray-800">
+              <h1 className="text-base font-bold text-gray-800">
                 {restaurant?.name}
               </h1>
               <p className="text-sm text-gray-500">
@@ -70,7 +69,7 @@ const RestaurantPage = () => {
           </div>
         </header>
       </div>
-      <div className="p-4 bg-gradient-to-r from-purple-200 to-blue-200">
+      <div className="p-4 ">
         {/* Delivery Info Section */}
         <section className="bg-white mt-32 p-4 rounded-lg shadow-lg">
           <div className="flex items-center justify-between">
@@ -122,8 +121,6 @@ const RestaurantPage = () => {
               ))}
           </div>
         </section>
-
-        <Footer />
       </div>
     </div>
   );

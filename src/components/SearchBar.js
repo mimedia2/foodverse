@@ -22,7 +22,7 @@ const SearchPage = () => {
   }, [categories]);
 
   return (
-    <div className="bg-blue-50">
+    <div className="bg-blue-50 min-h-screen">
       <div className="max-w-md mx-auto p-4">
         {/* Search Bar */}
         <div className="flex items-center space-x-2 mb-4 bg-white rounded-full shadow-md p-2">
