@@ -7,7 +7,7 @@ import YouMayAlsoLikeCard from "./YouMayAlsoLikeCard";
 import Loading from "./Loading";
 import Header from "./Header";
 import { MdShoppingCart } from "react-icons/md";
-import { HiOutlinePlusSm,HiOutlineMinusSm} from "react-icons/hi";
+import { HiOutlinePlusSm, HiOutlineMinusSm } from "react-icons/hi";
 
 function Cart() {
   const {
@@ -45,7 +45,7 @@ function Cart() {
         if (result?.success) {
           setLoading(false);
           setAlsoLike(result?.items);
-        }else {
+        } else {
           setLoading(false);
         }
       } catch (error) {
@@ -60,7 +60,7 @@ function Cart() {
   return (
     <div className="">
       {/* Header */}
-      <Header title={"Cart"}/>
+      <Header title={"Cart"} />
 
       {/* Cart Items */}
       <div className="pt-20 space-y-4 px-4 ">
@@ -92,14 +92,14 @@ function Cart() {
                   className=" text-gray-500 rounded-full border-2 border-slate-500 flex items-center justify-center"
                   onClick={() => handleDecreaseQuantity(item._id)}
                 >
-                  <HiOutlineMinusSm className="size-5"/>
+                  <HiOutlineMinusSm className="size-5" />
                 </button>
                 <span>{item.quantity}</span>
                 <button
                   className=" text-white bg-blue-500 rounded-full  flex items-center justify-center"
                   onClick={() => handleIncreaseQuantity(item._id)}
-                > 
-                  <HiOutlinePlusSm className="size-6 "/>
+                >
+                  <HiOutlinePlusSm className="size-6 " />
                 </button>
               </div>
             </div>
@@ -117,14 +117,14 @@ function Cart() {
           <>
             <div className=" text-blue-600 font-bold text-xl">
               <div className="flex flex-row items-center justify-center text-center">
-                  <HiOutlinePlusSm className="size-6 rounded-full border-2 border-blue-600 mr-2"/>
-                  <p>Add more items</p>
+                <HiOutlinePlusSm className="size-6 rounded-full border-2 border-blue-600 mr-2" />
+                <p>Add more items</p>
               </div>
               <h1 className=" font-bold text-lg text-gray-700 mt-4">
                 You may also like
               </h1>
             </div>
-            <div className="flex items-center justify-center gap-4 flex-wrap">
+            <div className="flex items-center gap-4 flex-nowrap w-full overflow-x-scroll">
               {alsoLike &&
                 alsoLike.map((item) => (
                   <YouMayAlsoLikeCard key={item._id} detail={item} />
@@ -157,18 +157,16 @@ function Cart() {
               <p>Subtotal</p>
               <p>TK {cartTotal - discount}</p>
             </div>
-            <Link
-              to={`/Checkout?subtotal=${cartTotal - discount}`}
-            >
-             <button className="bg-blue-500 text-white w-full py-3 rounded-lg mt-2">
-               Proceed to Checkout
-             </button>
-           </Link>
+            <Link to={`/Checkout?subtotal=${cartTotal - discount}`}>
+              <button className="bg-blue-500 text-white w-full py-3 rounded-lg mt-2">
+                Proceed to Checkout
+              </button>
+            </Link>
           </div>
         </>
       )}
       {/* Empty Cart Message */}
-      {cart.length === 0 &&  (
+      {cart.length === 0 && (
         <main className="flex items-center justify-center min-h-screen bg-white">
           <div className="text-center">
             <div className="flex justify-center mb-4">

@@ -75,7 +75,7 @@ const CartProvider = ({ children }) => {
       }
 
       return item;
-    });
+    }); 
 
     setCart(updateQuantity);
   }

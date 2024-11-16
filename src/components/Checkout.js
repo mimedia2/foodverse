@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link,useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { api_path_url, authToken } from "../secret";
 import toast from "react-hot-toast";
 import Header from "./Header";
 import { GiTakeMyMoney } from "react-icons/gi";
 import { MdDeliveryDining } from "react-icons/md";
+import { useCartContext } from "../contexts/CartContext";
+import { useSocket } from "../contexts/SocketIo";
 
 const CheckoutPage = () => {
   const location = useLocation();
@@ -22,6 +24,22 @@ const CheckoutPage = () => {
   const [showBkashModal, setShowBkashModal] = useState(false); // Modal for Bkash
   const [bkashNumber, setBkashNumber] = useState(""); // Bkash number input
   const [isProcessing, setIsProcessing] = useState(false); // Processing state
+
+  // cart
+  const { cart, setCart } = useCartContext();
+  const navigate = useNavigate();
+
+  // socket
+  const socket  = useSocket();
+
+  useEffect(() => {
+    if (socket) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      socket.emit("auth", user.id);
+    }
+  }, [socket]);
+
+  console.log(cart);
 
   useEffect(() => {
     setTotalAmount(passedSubtotal); // Ensure totalAmount is updated with passedSubtotal initially
@@ -41,6 +59,7 @@ const CheckoutPage = () => {
   };
 
   const placeOrder = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
     setIsProcessing(true);
     try {
       const orderData = {
@@ -49,18 +68,33 @@ const CheckoutPage = () => {
         instructions,
         selectedAddress,
         totalAmount: totalAmount + tip + deliveryCharge,
+
+        restaurantId: cart[0].restaurantId,
+        userId: user.id,
+        items: [...cart],
+        deliveryAmount: deliveryCharge,
+        dropLocation: selectedAddress,
+        restaurantLocation: "unknown location",
+        customerMessage: instructions,
       };
 
-
-      const response = await axios.post(`${api_path_url}/order/place-order`, orderData, {
-        headers: {
-          "x-auth-token": authToken,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        `${api_path_url}/order/create`,
+        { data: orderData },
+        {
+          headers: {
+            "x-auth-token": authToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.data.success) {
+        navigate("/");
         toast.success("Order placed successfully!");
+        localStorage.setItem("cartRest", "");
+        setCart([]);
+        socket.emit("sendOrderToRider", response.data.order);
       } else {
         toast.error("Failed to place order.");
       }
@@ -85,11 +119,15 @@ const CheckoutPage = () => {
       };
 
       // Assuming an API endpoint for Bkash payment initiation
-      const bkashResponse = await axios.post(`${api_path_url}/bkash-payment`, bkashData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const bkashResponse = await axios.post(
+        `${api_path_url}/bkash-payment`,
+        bkashData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (bkashResponse.data.success) {
         toast.success("Bkash payment successful!");
@@ -133,14 +171,22 @@ const CheckoutPage = () => {
           </div>
           <div className="flex space-x-4">
             <button
-              className={`flex-1 p-3 border ${selectedAddress === "home" ? "border-blue-600" : "border-gray-300"} rounded-lg flex items-center`}
+              className={`flex-1 p-3 border ${
+                selectedAddress === "home"
+                  ? "border-blue-600"
+                  : "border-gray-300"
+              } rounded-lg flex items-center`}
               onClick={() => setSelectedAddress("home")}
             >
               <span className="material-icons">home</span>
               <p className="ml-2">Home</p>
             </button>
             <button
-              className={`flex-1 p-3 border ${selectedAddress === "current" ? "border-blue-600" : "border-gray-300"} rounded-lg flex items-center`}
+              className={`flex-1 p-3 border ${
+                selectedAddress === "current"
+                  ? "border-blue-600"
+                  : "border-gray-300"
+              } rounded-lg flex items-center`}
               onClick={() => setSelectedAddress("current")}
             >
               <span className="material-icons">place</span>
@@ -158,7 +204,9 @@ const CheckoutPage = () => {
                 key={amount}
                 onClick={() => handleTipChange(amount)}
                 className={`px-2 py-1 border rounded-md ${
-                  tip === amount ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
+                  tip === amount
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700"
                 }`}
               >
                 TK {amount}
@@ -177,7 +225,11 @@ const CheckoutPage = () => {
             </div>
             <button
               onClick={() =>
-                setPaymentMethod(paymentMethod === "Cash on Delivery" ? "Bkash" : "Cash on Delivery")
+                setPaymentMethod(
+                  paymentMethod === "Cash on Delivery"
+                    ? "Bkash"
+                    : "Cash on Delivery"
+                )
               }
               className="text-blue-600 font-semibold"
             >
@@ -211,7 +263,7 @@ const CheckoutPage = () => {
             <p>TK {deliveryCharge}</p>
           </div>
         </div>
-        </div>
+      </div>
       {/* Order Summary and Place Order */}
       <section className=" fixed w-full bottom-0 left-0 bg-white z-50 px-4 pb-4">
         <div className="flex justify-between py-2 font-bold text-xl border-t-2 text-blue-600">
@@ -221,7 +273,10 @@ const CheckoutPage = () => {
             <p>TK {totalAmount + tip + deliveryCharge}</p>
           </div>
         </div>
-        <button onClick={handlePlaceOrder} className="w-full py-3 bg-blue-600 text-white rounded-lg font-bold">
+        <button
+          onClick={handlePlaceOrder}
+          className="w-full py-3 bg-blue-600 text-white rounded-lg font-bold"
+        >
           Confirm Order
         </button>
       </section>
@@ -255,7 +310,6 @@ const CheckoutPage = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
