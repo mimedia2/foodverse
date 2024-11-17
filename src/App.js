@@ -28,6 +28,7 @@ import Header from "./components/Header.jsx";
 import Restaurant from "./pages/Restaurant.jsx";
 import CategoryFilter from "./pages/CategoryFilter.jsx";
 import Checkout from "./components/Checkout.js"
+import Notification from "./components/Notification.js";
 
 function App() {
   return (
@@ -143,6 +144,10 @@ function App() {
               <Route
                 path="/checkout"
                 element={<PrivateRoute element={Checkout} />}
+
+              /><Route
+                path="/notification"
+                element={<PrivateRoute element={Notification} />}
               />
             </Routes>
           </div>

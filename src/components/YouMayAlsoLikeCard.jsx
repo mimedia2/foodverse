@@ -6,9 +6,9 @@ export default function YouMayAlsoLikeCard({ detail }) {
   const { handleAddToCart } = useCartContext();
 
   return (
-    <div className="mt-2">
-      <div className="flex space-x-4">
-        <div className="w-40 bg-white p-2 rounded-lg shadow-md">
+    <div className="m-2 ">
+      <div className="flex ">
+        <div className="w-40 bg-white p-2 rounded-lg shadow-md border">
           <img
             src={detail.image || "./img/burger.png"}
             alt="Chicken Burger"

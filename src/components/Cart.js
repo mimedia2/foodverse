@@ -124,7 +124,7 @@ function Cart() {
                 You may also like
               </h1>
             </div>
-            <div className="flex items-center justify-center gap-4 flex-wrap">
+            <div className="flex overflow-x-auto no-scrollbar">
               {alsoLike &&
                 alsoLike.map((item) => (
                   <YouMayAlsoLikeCard key={item._id} detail={item} />

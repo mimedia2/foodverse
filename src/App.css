@@ -13,3 +13,13 @@
     transition: transform 0.9s ease-in-out;
   }
   
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Hide scrollbar in Chrome, Safari, and Edge */
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+    scrollbar-width: none; /* Hide scrollbar in Firefox */
+  }
+  

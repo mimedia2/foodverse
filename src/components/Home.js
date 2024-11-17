@@ -2,6 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import Footer from "../Layout/Footer";
 import { HiLocationMarker, HiOutlineBell, HiOutlineSearch } from "react-icons/hi";
+import { FaMapLocationDot } from "react-icons/fa6";
+import axios from "axios";
+
+// Google Maps API to check delivery zone
+const checkDistanceWithGoogleMaps = async (userLat, userLng, centerLat, centerLng, deliveryRadius) => {
+  const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+  const url = `/api/maps?origins=${userLat},${userLng}&destinations=${centerLat},${centerLng}&apiKey=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`;
+
+  try {
+    const response = await axios.get(url);
+    const distanceInMeters = response.data.rows[0].elements[0].distance.value; // Distance in meters
+
+    return distanceInMeters <= deliveryRadius; // Check if within delivery radius
+  } catch (error) {
+    console.error("Error with Google Maps API:", error);
+    return false; // Treat as outside zone if error occurs
+  }
+};
+
 
 function Home() {
   const cuisines = [
@@ -40,22 +59,57 @@ function Home() {
     return () => clearInterval(interval); // Clean up the interval on component unmount
   }, [currentIndex]);
 
+  const [isServiceAvailable, setIsServiceAvailable] = useState(false);
+  const [userAddress, setUserAddress] = useState({ latitude: null, longitude: null });
+
+  useEffect(() => {
+    // Simulate default location (for testing purposes)
+    const defaultLat = 22.8366890508586;
+    const defaultLng = 91.10103300604688;
+
+    const address = JSON.parse(localStorage.getItem("userAddress")) || {
+      latitude: defaultLat,
+      longitude: defaultLng,
+    };
+
+    setUserAddress(address);
+
+    // Delivery zone parameters
+    const centerLat = 22.865347701065204; // Zone center latitude
+    const centerLng = 91.09704138414757; // Zone center longitude
+    const deliveryRadius = 5500; // 5.5 km radius
+
+    // Check if user's location is within the delivery zone
+    checkDistanceWithGoogleMaps(address.latitude, address.longitude, centerLat, centerLng, deliveryRadius)
+      .then((isWithinZone) => {
+        setIsServiceAvailable(isWithinZone);
+        console.log(isWithinZone ? "User is within the delivery zone." : "User is outside the delivery zone.");
+      })
+      .catch((error) => {
+        console.error("Error checking delivery zone:", error);
+      });
+  }, []);
+
   return (
     <>
       <div className='bg-white'>
         {/* Header section */}
         <div className='bg-red-500 w-full fixed z-10'>
           <header className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 pb-8 px-4 flex items-center justify-between">
+            <Link to="/AddressManager">
             <div className="flex items-center">
               {/* Location Icon */}
               <HiLocationMarker className="size-6 text-white" />
               <div className="ml-2 text-white text-sm">
-                <span className="block">Kamalnagar, Lakshmipur, Bangladesh</span>
+                <span className="block">{userAddress && userAddress.address ? userAddress.address : "Location not set"}</span> 
               </div>
             </div>
+            </Link>
             {/* Notification Icon */}
             <div>
-              <HiOutlineBell className="size-6 text-white" />
+              <Link to="/Notification">
+                <HiOutlineBell className="size-6 text-white" /> 
+              </Link>
             </div>
           </header>
 
@@ -73,6 +127,9 @@ function Home() {
             </div>
           </section>
         </div>
+
+        {isServiceAvailable ? (
+        <div>  
         {/* Slider section */}
         <section className="p-3">
           <div className="relative w-full max-w-lg mx-auto mt-28 overflow-hidden rounded-lg shadow-lg">
@@ -126,7 +183,34 @@ function Home() {
             ))}
           </div>
         </section>
+        </div>
+        ) : (
+        <div>  
+        {/* Homw Empty Massage */}
+        <section className='flex items-center justify-center min-h-screen bg-white'>
+        <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-gradient-to-r from-purple-100 to-blue-100 p-6 rounded-full">
+                <FaMapLocationDot className="size-16 text-blue-700" />
+              </div>
+            </div>
 
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              Please Set Your Address
+            </h2>
+            <p className="text-gray-600">We will give you restaurant and food item</p>
+            <p className="text-gray-600 mb-6">according to your location.</p>
+
+            <Link
+              to="/AddressManager"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-300"
+            >
+              Add Address
+            </Link>
+          </div>
+        </section>
+       </div>
+        )}
         <Footer />
       </div>
     </>
