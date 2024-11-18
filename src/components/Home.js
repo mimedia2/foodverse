@@ -7,17 +7,15 @@ import axios from "axios";
 
 // Google Maps API to check delivery zone
 const checkDistanceWithGoogleMaps = async (userLat, userLng, centerLat, centerLng, deliveryRadius) => {
-  const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-  const url = `/api/maps?origins=${userLat},${userLng}&destinations=${centerLat},${centerLng}&apiKey=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`;
+  const url = `/api/maps?origins=${userLat},${userLng}&destinations=${centerLat},${centerLng}`;
 
   try {
     const response = await axios.get(url);
-    const distanceInMeters = response.data.rows[0].elements[0].distance.value; // Distance in meters
-
-    return distanceInMeters <= deliveryRadius; // Check if within delivery radius
+    const distanceInMeters = response.data.rows[0].elements[0].distance.value; // দূরত্ব
+    return distanceInMeters <= deliveryRadius; // ডেলিভারি জোনের ভিতর কিনা চেক করা
   } catch (error) {
-    console.error("Error with Google Maps API:", error);
-    return false; // Treat as outside zone if error occurs
+    console.error("Error with Google Maps API:", error.message);
+    return false; // কোনো সমস্যা হলে false রিটার্ন করবে
   }
 };
 
