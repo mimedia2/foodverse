@@ -1,25 +1,25 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-require("dotenv").config(); // .env ফাইল লোড করার জন্য
+require("dotenv").config(); 
 
 const app = express();
-app.use(cors()); // CORS সমস্যা সমাধান
+app.use(cors()); // CORS 
 
-// Google Maps API এর জন্য এন্ডপয়েন্ট
+// Google Maps API 
 app.get("/api/maps", async (req, res) => {
-    const { origins, destinations } = req.query; // ফ্রন্টএন্ড থেকে origins এবং destinations
-    const apiKey = process.env.GOOGLE_MAPS_API_KEY; // API Key .env থেকে
-
+    const { origins, destinations } = req.query; 
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    console.log("Google Maps API Key:", apiKey); // Debugging
     try {
         const response = await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json`, {
             params: {
                 origins,
                 destinations,
-                key: apiKey, // ব্যাকএন্ড থেকে API Key পাঠানো হচ্ছে
+                key: apiKey, 
             },
         });
-        res.json(response.data); // রেসপন্স ফ্রন্টএন্ডে পাঠানো
+        res.json(response.data); 
     } catch (error) {
         console.error("Error fetching data from Google Maps API:", error.message);
         res.status(500).send("Error with Google Maps API");

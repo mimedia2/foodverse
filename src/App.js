@@ -29,6 +29,7 @@ import Restaurant from "./pages/Restaurant.jsx";
 import CategoryFilter from "./pages/CategoryFilter.jsx";
 import Checkout from "./components/Checkout.js"
 import Notification from "./components/Notification.js";
+import SetAddressManager from "./components/SetAddressManager.js";
 
 function App() {
   return (
@@ -145,9 +146,14 @@ function App() {
                 path="/checkout"
                 element={<PrivateRoute element={Checkout} />}
 
-              /><Route
+              />
+              <Route
                 path="/notification"
                 element={<PrivateRoute element={Notification} />}
+              />
+              <Route
+                path="/setaddressmanager"
+                element={<PrivateRoute element={SetAddressManager} />}
               />
             </Routes>
           </div>
