@@ -1,8 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import { socketUri } from "../secret";
 
-// You can define the server URL here or import from env variables.
-const SOCKET_SERVER_URL = "http://localhost:3000";
 // Create the context for the socket
 const SocketContext = createContext();
 
@@ -16,7 +15,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     // Initialize the socket connection when the component mounts
     const user = JSON.parse(localStorage.getItem("user"));
-    const socketInstance = io(SOCKET_SERVER_URL, {
+    const socketInstance = io(socketUri, {
       auth: {
         token: user?.token,
       },
