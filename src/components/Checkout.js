@@ -32,12 +32,12 @@ const CheckoutPage = () => {
   // socket
   const socket  = useSocket();
 
-  useEffect(() => {
-    if (socket) {
-      const user = JSON.parse(localStorage.getItem("user"));
-      socket.emit("auth", user.id);
-    }
-  }, [socket]);
+  // useEffect(() => {
+  //   if (socket) {
+  //     const user = JSON.parse(localStorage.getItem("user"));
+  //     socket.emit("auth", user.id);
+  //   }
+  // }, [socket]);
 
   console.log(cart);
 
@@ -95,6 +95,9 @@ const CheckoutPage = () => {
         localStorage.setItem("cartRest", "");
         setCart([]);
         socket.emit("sendOrderToRider", response.data.order);
+
+        // why this line is not working?
+        socket.emit('sendOrderToRestaurant', response.data.order);
       } else {
         toast.error("Failed to place order.");
       }

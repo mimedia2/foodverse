@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
 // You can define the server URL here or import from env variables.
-const SOCKET_SERVER_URL = "https://komolnogor-api.onrender.com";
+const SOCKET_SERVER_URL = "http://localhost:3000";
 // Create the context for the socket
 const SocketContext = createContext();
 
