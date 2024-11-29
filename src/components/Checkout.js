@@ -8,18 +8,23 @@ import { GiTakeMyMoney } from "react-icons/gi";
 import { MdDeliveryDining } from "react-icons/md";
 import { useCartContext } from "../contexts/CartContext";
 import { useSocket } from "../contexts/SocketIo";
+import { useAuth } from "../contexts/AuthContext";
 
 const CheckoutPage = () => {
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const passedSubtotal = parseFloat(queryParams.get("subtotal")) || 0; // Retrieve subtotal from URL query parameters
-  console.log(passedSubtotal);
+  // const queryParams = new URLSearchParams(location.search);
+  // const passedSubtotal = parseFloat(queryParams.get("subtotal")) || 0; // Retrieve subtotal from URL query parameters
+  // console.log(passedSubtotal);
+
+  const { cartTotal, discount, addonTotal } = useCartContext();
+
+  const { user } = useAuth();
 
   const [tip, setTip] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [instructions, setInstructions] = useState("");
   const [selectedAddress, setSelectedAddress] = useState("home");
-  const [totalAmount, setTotalAmount] = useState(passedSubtotal); // Cart subtotal amount
+  // const [totalAmount, setTotalAmount] = useState(passedSubtotal); // Cart subtotal amount
   const [deliveryCharge, setDeliveryCharge] = useState(25); // Delivery charge
   const [showBkashModal, setShowBkashModal] = useState(false); // Modal for Bkash
   const [bkashNumber, setBkashNumber] = useState(""); // Bkash number input
@@ -30,20 +35,22 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
 
   // socket
-  const socket  = useSocket();
+  const socket = useSocket();
 
-  // useEffect(() => {
+  // user data
+  // console.log(user);
+  // useEf  fect(() => {
   //   if (socket) {
   //     const user = JSON.parse(localStorage.getItem("user"));
   //     socket.emit("auth", user.id);
   //   }
   // }, [socket]);
 
-  console.log(cart);
+  // console.log(cart);
 
-  useEffect(() => {
-    setTotalAmount(passedSubtotal); // Ensure totalAmount is updated with passedSubtotal initially
-  }, [passedSubtotal]);
+  // useEffect(() => {
+  //   setTotalAmount(passedSubtotal); // Ensure totalAmount is updated with passedSubtotal initially
+  // }, [passedSubtotal]);
 
   const handlePlaceOrder = () => {
     if (paymentMethod === "Bkash") {
@@ -65,10 +72,7 @@ const CheckoutPage = () => {
       const orderData = {
         tip,
         paymentMethod,
-        instructions,
-        selectedAddress,
-        totalAmount: totalAmount + tip + deliveryCharge,
-
+        totalAmount: cartTotal + tip + deliveryCharge,
         restaurantId: cart[0].restaurantId,
         userId: user.id,
         items: [...cart],
@@ -76,6 +80,8 @@ const CheckoutPage = () => {
         dropLocation: selectedAddress,
         restaurantLocation: "unknown location",
         customerMessage: instructions,
+        discount,
+        addonTotal,
       };
 
       const response = await axios.post(
@@ -97,7 +103,7 @@ const CheckoutPage = () => {
         socket.emit("sendOrderToRider", response.data.order);
 
         // why this line is not working?
-        socket.emit('sendOrderToRestaurant', response.data.order);
+        socket.emit("sendOrderToRestaurant", response.data.order);
       } else {
         toast.error("Failed to place order.");
       }
@@ -116,7 +122,7 @@ const CheckoutPage = () => {
     try {
       const bkashData = {
         number: bkashNumber,
-        amount: totalAmount + tip + deliveryCharge,
+        amount: cartTotal + tip + deliveryCharge,
         appKey: "C30RAddKHUwtVMinOmAtaFkStc", // Your App Key
         appSecret: "Cs5iG9nQCgSbERWUTaEP7F2d99Eu1rE5gLs3rqftVBdfwtK9jtD0", // Your Secret Key
       };
@@ -146,6 +152,10 @@ const CheckoutPage = () => {
       setShowBkashModal(false);
     }
   };
+
+  useEffect(() => {
+    console.log(selectedAddress);
+  }, [selectedAddress]);
 
   return (
     <div className="relative">
@@ -179,7 +189,7 @@ const CheckoutPage = () => {
                   ? "border-blue-600"
                   : "border-gray-300"
               } rounded-lg flex items-center`}
-              onClick={() => setSelectedAddress("home")}
+              onClick={() => setSelectedAddress(user.address.home.address)}
             >
               <span className="material-icons">home</span>
               <p className="ml-2">Home</p>
@@ -190,7 +200,7 @@ const CheckoutPage = () => {
                   ? "border-blue-600"
                   : "border-gray-300"
               } rounded-lg flex items-center`}
-              onClick={() => setSelectedAddress("current")}
+              onClick={() => setSelectedAddress(user.address.home.address)}
             >
               <span className="material-icons">place</span>
               <p className="ml-2">Current</p>
@@ -255,7 +265,7 @@ const CheckoutPage = () => {
         <div className="bg-white rounded-lg">
           <div className="flex justify-between py-2">
             <p className="text-gray-700">Subtotal</p>
-            <p>TK {totalAmount}</p>
+            <p>TK {cartTotal}</p>
           </div>
           <div className="flex justify-between py-2">
             <p className="text-gray-700">Rider Tip</p>
@@ -265,6 +275,11 @@ const CheckoutPage = () => {
             <p className="text-gray-700">Delivery Charge</p>
             <p>TK {deliveryCharge}</p>
           </div>
+
+          <div className="flex justify-between py-2">
+            <p className="text-gray-700">Discount</p>
+            <p>TK {discount}</p>
+          </div>
         </div>
       </div>
       {/* Order Summary and Place Order */}
@@ -273,7 +288,7 @@ const CheckoutPage = () => {
           <p>Total</p>
           <div className="flex items-center">
             <GiTakeMyMoney className="size-6 text-purple-600 mx-1" />
-            <p>TK {totalAmount + tip + deliveryCharge}</p>
+            <p>TK {cartTotal + tip + deliveryCharge - discount}</p>
           </div>
         </div>
         <button

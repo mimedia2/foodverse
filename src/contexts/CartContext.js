@@ -16,10 +16,23 @@ const CartProvider = ({ children }) => {
   // total for cart
   const [cartTotal, setCartTotal] = useState(0);
 
+  // addons
+  const [addonTotal, setAddonTotal] = useState(0);
+
+  // discount
+  const [discount, setDiscount] = useState(20);
+
   useEffect(() => {
     const total = cart.reduce((total, item, index) => {
-      return (total = total + item.offerPrice * item.quantity);
+      return (total =
+        total + item.offerPrice * item.quantity + item.addonValue);
     }, 0);
+
+    const addon = cart.reduce((total, item, index) => {
+      return (total += item.addonValue);
+    }, 0);
+
+    setAddonTotal(addon);
 
     setCartTotal(total);
   }, [cart]);
@@ -31,7 +44,7 @@ const CartProvider = ({ children }) => {
   // Add new item to cart
   function handleAddToCart(item) {
     const existingRestaurant = localStorage.getItem("cartRest");
-    console.log("item is: ", item)
+    console.log("item is: ", item);
 
     // Check if the cart already has items from a different restaurant
     if (existingRestaurant && existingRestaurant !== item.restaurantId) {
@@ -75,7 +88,7 @@ const CartProvider = ({ children }) => {
       }
 
       return item;
-    }); 
+    });
 
     setCart(updateQuantity);
   }
@@ -101,6 +114,8 @@ const CartProvider = ({ children }) => {
         handleDecreaseQuantity,
         cartTotal,
         handleRemoveItem,
+        addonTotal,
+        discount,
       }}
     >
       {children}

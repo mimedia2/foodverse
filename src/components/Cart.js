@@ -16,18 +16,22 @@ function Cart() {
     handleDecreaseQuantity,
     cartTotal,
     handleRemoveItem,
+    addonTotal,
+    discount,
   } = useCartContext();
 
   // loading
   const [loading, setLoading] = useState(false);
 
+  // addons total
+  //  const [addonTotal, setAddonTotal] = useState();
+
   // special discount
-  const [discount, setDiscount] = useState(50);
   const [alsoLike, setAlsoLike] = useState(null);
 
   useEffect(() => {
     const cartRest = localStorage.getItem("cartRest");
-    console.log(cartRest);
+    //  console.log(cartRest);
     async function handleFetchAlsoLike() {
       setLoading(true);
       try {
@@ -50,12 +54,14 @@ function Cart() {
         }
       } catch (error) {
         setLoading(false);
-        console.log(error);
+        //  console.log(error);
         throw new Error("There is an error: ", error.message);
       }
     }
     handleFetchAlsoLike();
   }, []);
+
+  useEffect(() => {}, [cart]);
 
   return (
     <div className="">
@@ -141,7 +147,7 @@ function Cart() {
           <div className="p-4 bg-white rounded-lg  mb-28">
             <div className="flex justify-between py-2">
               <p className="text-gray-700">Sub total</p>
-              <p>TK {cartTotal}</p>
+              <p>TK {cartTotal} </p>
             </div>
             <div className="flex justify-between py-2">
               <p className="text-gray-700">Discount</p>
@@ -149,7 +155,7 @@ function Cart() {
             </div>
             <div className="flex justify-between py-2">
               <p className="text-gray-700">Addons</p>
-              <p>TK 0.00</p>
+              <p>TK {addonTotal}</p>
             </div>
           </div>
           <div className="fixed w-full bottom-0 left-0 bg-white z-50 px-4 pb-4">
