@@ -28,11 +28,10 @@ const CheckoutPage = () => {
   const [tip, setTip] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [instructions, setInstructions] = useState("");
-  const [selectedAddress, setSelectedAddress] = useState("home");
+  const [selectedAddress, setSelectedAddress] = useState("");
   // const [totalAmount, setTotalAmount] = useState(passedSubtotal); // Cart subtotal amount
   const [deliveryCharge, setDeliveryCharge] = useState(25); // Delivery charge
   const [showBkashModal, setShowBkashModal] = useState(false); // Modal for Bkash
-  const [bkashNumber, setBkashNumber] = useState(""); // Bkash number input
   const [isProcessing, setIsProcessing] = useState(false); // Processing state
 
   // cart
@@ -58,6 +57,11 @@ const CheckoutPage = () => {
   // }, [passedSubtotal]);
 
   const handlePlaceOrder = () => {
+    if (selectedAddress === undefined || selectedAddress === "") {
+      toast.error("please select delivery location");
+      return;
+    }
+
     if (paymentMethod === "Bkash") {
       setShowBkashModal(true); // Show Bkash modal if Bkash is selected
       return;
@@ -136,6 +140,8 @@ const CheckoutPage = () => {
       placeOrder();
     } else if (paymentStatus === "cancel") {
       toast.error(paymentStatus);
+    } else if (paymentStatus === "failure") {
+      toast.error(paymentStatus);
     }
   }, [paymentStatus]);
 
@@ -149,7 +155,6 @@ const CheckoutPage = () => {
         toast.error("failed to get user id. Please re-login.");
         return;
       }
-
       const orderData = {
         tip,
         paymentMethod,
@@ -165,7 +170,7 @@ const CheckoutPage = () => {
         addonTotal,
       };
 
-      console.log("alert method: ");
+   //   console.log("alert method: ");
 
       const { data } = await axios.post(
         `${api_path_url}/bkash/payment/create`,
@@ -232,7 +237,6 @@ const CheckoutPage = () => {
               } rounded-lg flex items-center`}
               onClick={() => setSelectedAddress(user.address.home.address)}
             >
-              <span className="material-icons">home</span>
               <p className="ml-2">Home</p>
             </button>
             <button
@@ -241,11 +245,32 @@ const CheckoutPage = () => {
                   ? "border-blue-600"
                   : "border-gray-300"
               } rounded-lg flex items-center`}
-              onClick={() => setSelectedAddress(user.address.home.address)}
+              onClick={() => setSelectedAddress(user.address.office.address)}
             >
-              <span className="material-icons">place</span>
               <p className="ml-2">Current</p>
             </button>
+
+            <button
+              className={`flex-1 p-3 border ${
+                selectedAddress === "current"
+                  ? "border-blue-600"
+                  : "border-gray-300"
+              } rounded-lg flex items-center`}
+              onClick={() => setSelectedAddress(user.address.others.address)}
+            >
+              <p className="ml-2">others</p>
+            </button>
+          </div>
+
+          <div>
+            {selectedAddress !== undefined ? (
+              <>
+                <h1 className="text-lg font-semibold">Selected location</h1>
+                <span>{selectedAddress}</span>
+
+                {console.log(user?.address)}
+              </>
+            ) : null}
           </div>
         </section>
 
