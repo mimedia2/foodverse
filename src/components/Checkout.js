@@ -9,9 +9,14 @@ import { MdDeliveryDining } from "react-icons/md";
 import { useCartContext } from "../contexts/CartContext";
 import { useSocket } from "../contexts/SocketIo";
 import { useAuth } from "../contexts/AuthContext";
+import Cookies from "js-cookie";
 
 const CheckoutPage = () => {
   const location = useLocation();
+
+  //payment status
+  const [paymentStatus, setPaymentStatus] = useState(null);
+
   // const queryParams = new URLSearchParams(location.search);
   // const passedSubtotal = parseFloat(queryParams.get("subtotal")) || 0; // Retrieve subtotal from URL query parameters
   // console.log(passedSubtotal);
@@ -55,6 +60,7 @@ const CheckoutPage = () => {
   const handlePlaceOrder = () => {
     if (paymentMethod === "Bkash") {
       setShowBkashModal(true); // Show Bkash modal if Bkash is selected
+      return;
     } else {
       placeOrder(); // Directly place order for Cash on Delivery
     }
@@ -112,37 +118,72 @@ const CheckoutPage = () => {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsProcessing(false);
-      setShowBkashModal(false); // Close Bkash modal if open
+      setShowBkashModal(false);
     }
   };
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const result = queryParams.get("payment");
+    setPaymentStatus(result);
+
+    console.log(result);
+  }, [location]);
+
+  // send order when status is changing
+  useEffect(() => {
+    if (paymentStatus === "success") {
+      placeOrder();
+    } else if (paymentStatus === "cancel") {
+      toast.error(paymentStatus);
+    }
+  }, [paymentStatus]);
 
   const handleBkashPayment = async () => {
     // Simulating Bkash API call with provided credentials
     setIsProcessing(true);
     try {
-      const bkashData = {
-        number: bkashNumber,
-        amount: cartTotal + tip + deliveryCharge,
-        appKey: "C30RAddKHUwtVMinOmAtaFkStc", // Your App Key
-        appSecret: "Cs5iG9nQCgSbERWUTaEP7F2d99Eu1rE5gLs3rqftVBdfwtK9jtD0", // Your Secret Key
+      const id = Cookies.get("id");
+
+      if (!id) {
+        toast.error("failed to get user id. Please re-login.");
+        return;
+      }
+
+      const orderData = {
+        tip,
+        paymentMethod,
+        totalAmount: cartTotal + tip + deliveryCharge,
+        restaurantId: cart[0].restaurantId,
+        userId: id,
+        items: [...cart],
+        deliveryAmount: deliveryCharge,
+        dropLocation: selectedAddress,
+        restaurantLocation: "unknown location",
+        customerMessage: instructions,
+        discount,
+        addonTotal,
       };
 
-      // Assuming an API endpoint for Bkash payment initiation
-      const bkashResponse = await axios.post(
-        `${api_path_url}/bkash-payment`,
-        bkashData,
+      console.log("alert method: ");
+
+      const { data } = await axios.post(
+        `${api_path_url}/bkash/payment/create`,
+        {
+          ...orderData,
+        },
         {
           headers: {
-            "Content-Type": "application/json",
+            "x-auth-token": process.env.REACT_APP_API_TOKEN,
           },
+          withCredentials: true,
         }
       );
 
-      if (bkashResponse.data.success) {
-        toast.success("Bkash payment successful!");
-        placeOrder(); // Proceed with order placement after successful payment
-      } else {
-        toast.error("Bkash payment failed. Try again.");
+      console.log(data);
+
+      if (data.success) {
+        window.location.href = data.bkashURL;
       }
     } catch (error) {
       console.error("Bkash payment error:", error);
@@ -304,19 +345,18 @@ const CheckoutPage = () => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-sm w-full">
             <h3 className="text-lg font-semibold mb-4">Bkash Payment</h3>
-            <input
+            {/* <input
               type="text"
               placeholder="Enter your Bkash number"
               value={bkashNumber}
               onChange={(e) => setBkashNumber(e.target.value)}
               className="w-full p-2 border rounded-lg mb-4"
-            />
+            /> */}
             <button
               onClick={handleBkashPayment}
               className="w-full py-2 bg-blue-600 text-white rounded-lg font-bold"
-              disabled={isProcessing}
             >
-              {isProcessing ? "Processing..." : "Confirm Bkash Payment"}
+              Go to payment method
             </button>
             <button
               onClick={() => setShowBkashModal(false)}

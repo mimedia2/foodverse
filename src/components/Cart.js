@@ -161,9 +161,9 @@ function Cart() {
           <div className="fixed w-full bottom-0 left-0 bg-white z-50 px-4 pb-4">
             <div className="flex justify-between py-2 font-bold text-xl border-t-2 text-blue-600">
               <p>Subtotal</p>
-              <p>TK {cartTotal - discount}</p>
+              <p>TK {cartTotal - discount + addonTotal}</p>
             </div>
-            <Link to={`/Checkout?subtotal=${cartTotal - discount}`}>
+            <Link to={`/Checkout`}>
               <button className="bg-blue-500 text-white w-full py-3 rounded-lg mt-2">
                 Proceed to Checkout
               </button>
