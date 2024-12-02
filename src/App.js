@@ -30,6 +30,9 @@ import CategoryFilter from "./pages/CategoryFilter.jsx";
 import Checkout from "./components/Checkout.js";
 import { SocketProvider } from "./contexts/SocketIo.js";
 import { Helmet } from "react-helmet";
+import 'swiper/css';
+
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
 function App() {
   return (

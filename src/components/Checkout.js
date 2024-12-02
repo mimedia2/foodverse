@@ -11,6 +11,7 @@ import { useSocket } from "../contexts/SocketIo";
 import { useAuth } from "../contexts/AuthContext";
 import Cookies from "js-cookie";
 import Loading from "./Loading";
+import AddressCarousel from "./address/AddressCarousel";
 
 const CheckoutPage = () => {
   const location = useLocation();
@@ -24,6 +25,7 @@ const CheckoutPage = () => {
 
   const { cartTotal, discount, addonTotal } = useCartContext();
   const [loadingAddress, setLoadingAddress] = useState(true);
+  const [addressList, setAddressList] = useState([]);
 
   const { user } = useAuth();
 
@@ -35,10 +37,12 @@ const CheckoutPage = () => {
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [instructions, setInstructions] = useState("");
   const [selectedAddress, setSelectedAddress] = useState("");
-  // const [totalAmount, setTotalAmount] = useState(passedSubtotal); // Cart subtotal amount
+
   const [deliveryCharge, setDeliveryCharge] = useState(25); // Delivery charge
   const [showBkashModal, setShowBkashModal] = useState(false); // Modal for Bkash
   const [isProcessing, setIsProcessing] = useState(false); // Processing state
+
+  const [placeOrderConfirmation, setPlaceOrderConfirmation] = useState(false);
 
   // cart
   const { cart, setCart } = useCartContext();
@@ -191,7 +195,7 @@ const CheckoutPage = () => {
         }
       );
 
-      console.log(data);
+      // console.log(data);
 
       if (data.success) {
         window.location.href = data.bkashURL;
@@ -214,7 +218,7 @@ const CheckoutPage = () => {
       <Header title={"Checkout"} />
       <div className="max-w-lg mx-auto p-4 space-y-6 mb-24 pt-24">
         {/* Delivery Section */}
-        <section className="space-y-2 border rounded-md py-2">
+        <section className="space-y-2 border rounded-sectionmd py-2">
           <h2 className="text-xl font-bold text-center">Estimated Delivery</h2>
           <div className="flex item-center justify-center">
             <MdDeliveryDining className="size-6 mx-1 text-purple-600" />
@@ -227,75 +231,19 @@ const CheckoutPage = () => {
         </section>
 
         {/* Delivery Address Section */}
-        {loadingAddress ? (
+
+       
+
+        {/* carosuel address */}
+        {user?.address === undefined ? (
           <div className="w-full flex items-center justify-center">
             <Loading />
           </div>
         ) : (
-          <section className="space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Delivery Address</h3>
-              <Link to="/AddressManager">
-                <h2 className="text-blue-600 font-bold">Edit Address</h2>
-              </Link>
-            </div>
-            <div className="flex space-x-4">
-              <button
-                className={`flex-1 p-3 border ${
-                  selectedAddress === "home"
-                    ? "border-blue-600"
-                    : "border-gray-300"
-                } rounded-lg flex items-center`}
-                onClick={() => {
-                  user?.address.home.address !== undefined
-                    ? setSelectedAddress(user?.address.home.address)
-                    : toast.error("address is not set.");
-                }}
-              >
-                <p className="ml-2">Home</p>
-              </button>
-              <button
-                className={`flex-1 p-3 border ${
-                  selectedAddress === "current"
-                    ? "border-blue-600"
-                    : "border-gray-300"
-                } rounded-lg flex items-center`}
-                onClick={() => {
-                  user?.address.office.address !== undefined
-                    ? setSelectedAddress(user?.address.office.address)
-                    : toast.error("address is not set.");
-                }}
-              >
-                <p className="ml-2">Current</p>
-              </button>
-
-              <button
-                className={`flex-1 p-3 border ${
-                  selectedAddress === "current"
-                    ? "border-blue-600"
-                    : "border-gray-300"
-                } rounded-lg flex items-center`}
-                onClick={() => {
-                  user?.address.others.address !== undefined
-                    ? setSelectedAddress(user?.address.others.address)
-                    : toast.error("adress is not set.");
-                }}
-              >
-                <p className="ml-2">others</p>
-              </button>
-            </div>
-
-            <div>
-              {selectedAddress !== undefined ? (
-                <>
-                  <h1 className="text-lg font-semibold">Selected location</h1>
-                  <span>{selectedAddress}</span>
-
-                  {/* { // console.log(user?.address)} */}
-                </>
-              ) : null}
-            </div>
-          </section>
+          <AddressCarousel
+            addressList={user?.address}
+            setSelectedAddress={setSelectedAddress}
+          />
         )}
 
         {/* Tip Section */}
@@ -382,12 +330,41 @@ const CheckoutPage = () => {
           </div>
         </div>
         <button
-          onClick={handlePlaceOrder}
           className="w-full py-3 bg-blue-600 text-white rounded-lg font-bold"
+          onClick={() => setPlaceOrderConfirmation(true)}
         >
           Confirm Order
         </button>
       </section>
+
+      {/* place order confirmation */}
+      {placeOrderConfirmation && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-sm w-full">
+            <h1 className="text-lg font-semibold mb-4">Place your order</h1>
+            {/* <input
+              type="text"
+              placeholder="Enter your Bkash number"
+              value={bkashNumber}
+              onChange={(e) => setBkashNumber(e.target.value)}
+              className="w-full p-2 border rounded-lg mb-4"
+            /> */}
+            <button
+              onClick={handlePlaceOrder}
+              className="w-full py-2 bg-blue-600 text-white rounded-lg font-bold"
+            >
+              Place order
+            </button>
+            <button
+              onClick={() => setPlaceOrderConfirmation(false)}
+              className="w-full py-2 mt-2 bg-gray-300 text-black rounded-lg font-bold"
+              disabled={isProcessing}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Bkash Modal */}
       {showBkashModal && (
