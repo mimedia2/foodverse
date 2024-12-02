@@ -49,7 +49,7 @@ function Cart() {
             method: "POST",
             headers: {
               "x-auth-token": authToken,
-              "Content-Type": "application/json",  // Set content type to JSON
+              "Content-Type": "application/json",  
             },
             body: JSON.stringify({
               excludingItemList: matchingList, 
