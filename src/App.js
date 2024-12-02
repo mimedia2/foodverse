@@ -29,6 +29,7 @@ import Restaurant from "./pages/Restaurant.jsx";
 import CategoryFilter from "./pages/CategoryFilter.jsx";
 import Checkout from "./components/Checkout.js";
 import { SocketProvider } from "./contexts/SocketIo.js";
+import { Helmet } from "react-helmet";
 
 function App() {
   return (
@@ -36,6 +37,50 @@ function App() {
       <AuthProvider>
         <ToastContainer position="top-right" theme="dark" />
         <Toaster />
+        <Helmet>
+          <title>
+            Foodverse Delivery - Fresh and Fast Food Delivery Service
+          </title>
+          <meta
+            name="description"
+            content="Order fresh, delicious meals online with Foodverse Delivery. Fast and reliable service delivering to your doorstep."
+          />
+          <meta
+            property="og:title"
+            content="Foodverse Delivery - Fresh and Fast Food Delivery Service"
+          />
+          <meta
+            property="og:description"
+            content="Order fresh, delicious meals online with Foodverse Delivery. Fast and reliable service delivering to your doorstep."
+          />
+          <meta
+            property="og:image"
+            content="https://foodversedelivery.com/images/social-image.jpg"
+          />
+          <meta property="og:url" content="https://foodversedelivery.com" />
+          <meta property="og:type" content="website" />
+          <meta
+            name="twitter:title"
+            content="Foodverse Delivery - Fresh and Fast Food Delivery Service"
+          />
+          <meta
+            name="twitter:description"
+            content="Order fresh, delicious meals online with Foodverse Delivery. Fast and reliable service delivering to your doorstep."
+          />
+          <meta
+            name="twitter:image"
+            content="https://foodversedelivery.com/images/social-image.jpg"
+          />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="robots" content="index, follow" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+          <link rel="icon" href="https://foodversedelivery.com/favicon.ico" />
+          <link rel="canonical" href="https://foodversedelivery.com" />
+        </Helmet>
+
         <CartProvider>
           <Router>
             <div className="App">

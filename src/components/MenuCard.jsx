@@ -10,7 +10,7 @@ export default function MenuCard({ detail }) {
 
   const [addonList, setAddonList] = useState([]);
 
-  console.log(detail);
+  // console.log(detail);
 
   const [price, setPrice] = useState(quantity * detail?.offerPrice);
 

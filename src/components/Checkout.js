@@ -110,9 +110,9 @@ const CheckoutPage = () => {
         toast.success("Order placed successfully!");
         localStorage.setItem("cartRest", "");
         setCart([]);
-        socket.emit("sendOrderToRider", response.data.order);
+        //  socket.emit("sendOrderToRider", response.data.order);
 
-        // why this line is not working?
+        //
         socket.emit("sendOrderToRestaurant", response.data.order);
       } else {
         toast.error("Failed to place order.");
@@ -170,7 +170,7 @@ const CheckoutPage = () => {
         addonTotal,
       };
 
-   //   console.log("alert method: ");
+      //   console.log("alert method: ");
 
       const { data } = await axios.post(
         `${api_path_url}/bkash/payment/create`,
@@ -235,7 +235,11 @@ const CheckoutPage = () => {
                   ? "border-blue-600"
                   : "border-gray-300"
               } rounded-lg flex items-center`}
-              onClick={() => setSelectedAddress(user.address.home.address)}
+              onClick={() => {
+                user?.address.home.address !== undefined
+                  ? setSelectedAddress(user?.address.home.address)
+                  : toast.error("address is not set.");
+              }}
             >
               <p className="ml-2">Home</p>
             </button>
@@ -245,7 +249,11 @@ const CheckoutPage = () => {
                   ? "border-blue-600"
                   : "border-gray-300"
               } rounded-lg flex items-center`}
-              onClick={() => setSelectedAddress(user.address.office.address)}
+              onClick={() => {
+                user?.address.office.address !== undefined
+                  ? setSelectedAddress(user?.address.office.address)
+                  : toast.error("address is not set.");
+              }}
             >
               <p className="ml-2">Current</p>
             </button>
@@ -256,7 +264,11 @@ const CheckoutPage = () => {
                   ? "border-blue-600"
                   : "border-gray-300"
               } rounded-lg flex items-center`}
-              onClick={() => setSelectedAddress(user.address.others.address)}
+              onClick={() => {
+                user?.address.others.address !== undefined
+                  ? setSelectedAddress(user?.address.others.address)
+                  : toast.error("adress is not set.");
+              }}
             >
               <p className="ml-2">others</p>
             </button>

@@ -44,7 +44,20 @@ const CartProvider = ({ children }) => {
   // Add new item to cart
   function handleAddToCart(item) {
     const existingRestaurant = localStorage.getItem("cartRest");
-    console.log("item is: ", item);
+    // console.log("item is: ", item);
+
+    const itemId = item._id;
+    // console.log(itemId)
+
+    const isExist = cart.findIndex((item, index) => {
+      return item._id === itemId;
+    });
+    if (isExist !== -1) {
+      toast.error("item already in cart.");
+      return;
+    }
+
+    // console.log(isExist);
 
     // Check if the cart already has items from a different restaurant
     if (existingRestaurant && existingRestaurant !== item.restaurantId) {

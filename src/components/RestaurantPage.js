@@ -29,7 +29,7 @@ const RestaurantPage = () => {
 
         const result = await apiResponse.json();
 
-        console.log(result);
+     //   console.log(result);
 
         if (result) {
           setLoading(false);
@@ -37,7 +37,7 @@ const RestaurantPage = () => {
           setRestaurant(result?.restaurant);
         }
       } catch (error) {
-        console.log(error);
+     //   console.log(error);
         setLoading(false);
       }
     }

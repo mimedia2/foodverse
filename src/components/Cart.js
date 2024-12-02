@@ -33,17 +33,30 @@ function Cart() {
     const cartRest = localStorage.getItem("cartRest");
     //  console.log(cartRest);
     async function handleFetchAlsoLike() {
+      let matchingList = [];
+
+      cart.map((item, index) => {
+        matchingList.push(item._id);
+      });
+
+      
+
       setLoading(true);
       try {
         const apiResponse = await fetch(
           `${api_path_url}/menu/you-may-like?restaurant-id=${cartRest}`,
           {
-            method: "GET",
+            method: "POST",
             headers: {
               "x-auth-token": authToken,
+              "Content-Type": "application/json",  // Set content type to JSON
             },
+            body: JSON.stringify({
+              excludingItemList: matchingList, 
+            }),
           }
         );
+        
 
         const result = await apiResponse.json();
         if (result?.success) {

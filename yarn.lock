@@ -2920,10 +2920,10 @@ axe-core@^4.10.0:
   resolved "https://registry.npmjs.org/axe-core/-/axe-core-4.10.0.tgz"
   integrity sha512-Mr2ZakwQ7XUAjp7pAwQWRhhK8mQQ6JAaNWSjmjxil0R8BPioMtQsTLOolGYkji1rcL++3dCqZA3zWqpT+9Ew6g==
 
-axios@^1.7.7:
-  version "1.7.7"
-  resolved "https://registry.npmjs.org/axios/-/axios-1.7.7.tgz"
-  integrity sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==
+axios@^1.7.8:
+  version "1.7.8"
+  resolved "https://registry.npmjs.org/axios/-/axios-1.7.8.tgz"
+  integrity sha512-Uu0wb7KNqK2t5K+YQyVCLM76prD5sRFjKHbJYCP1J7JFGEQ6nN7HWn9+04LAeiJ3ji54lgS/gZCH1oxyrf1SPw==
   dependencies:
     follow-redirects "^1.15.6"
     form-data "^4.0.0"
@@ -6442,6 +6442,11 @@ js-cookie@^3.0.5:
   resolved "https://registry.npmjs.org/js-cookie/-/js-cookie-3.0.5.tgz"
   integrity sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==
 
+js-cookies@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/js-cookies/-/js-cookies-1.0.4.tgz"
+  integrity sha512-cO1SHDH7zJsi8FihHmDtcWx90mWmrfGOrcLKPeaEX6tLyuTK2wnzgdmNa34Q6rNAd6VhQUgjDt5Eyl90VI/Fpg==
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz"
@@ -8000,7 +8005,7 @@ prompts@^2.0.1, prompts@^2.4.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.8.1:
+prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -8138,6 +8143,21 @@ react-error-overlay@^6.0.11:
   resolved "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-6.0.11.tgz"
   integrity sha512-/6UZ2qgEyH2aqzYZgQPxEnz33NJ2gNsnHA2o5+o4wW9bLM/JYQitNP9xPhsXwC08hMMovfGe/8retsdDsczPRg==
 
+react-fast-compare@^3.1.1:
+  version "3.2.2"
+  resolved "https://registry.npmjs.org/react-fast-compare/-/react-fast-compare-3.2.2.tgz"
+  integrity sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==
+
+react-helmet@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.npmjs.org/react-helmet/-/react-helmet-6.1.0.tgz"
+  integrity sha512-4uMzEY9nlDlgxr61NL3XbKRy1hEkXmKNXhjbAIOVw5vcFrsdYbH2FEwcNyWvWinl103nXgzYNlns9ca+8kFiWw==
+  dependencies:
+    object-assign "^4.1.1"
+    prop-types "^15.7.2"
+    react-fast-compare "^3.1.1"
+    react-side-effect "^2.1.0"
+
 react-hot-toast@^2.4.1:
   version "2.4.1"
   resolved "https://registry.npmjs.org/react-hot-toast/-/react-hot-toast-2.4.1.tgz"
@@ -8245,6 +8265,11 @@ react-scripts@5.0.1:
   optionalDependencies:
     fsevents "^2.3.2"
 
+react-side-effect@^2.1.0:
+  version "2.1.2"
+  resolved "https://registry.npmjs.org/react-side-effect/-/react-side-effect-2.1.2.tgz"
+  integrity sha512-PVjOcvVOyIILrYoyGEpDN3vmYNLdy1CajSFNt4TDsVQC5KpTijDvWVoR+/7Rz2xT978D8/ZtFceXxzsPwZEDvw==
+
 react-toastify@^10.0.6:
   version "10.0.6"
   resolved "https://registry.npmjs.org/react-toastify/-/react-toastify-10.0.6.tgz"
@@ -8252,7 +8277,7 @@ react-toastify@^10.0.6:
   dependencies:
     clsx "^2.1.0"
 
-react@*, "react@^16.8 || ^17 || ^18", react@^18.0.0, react@^18.3.1, "react@>= 16", react@>=16, react@>=16.8, react@>=16.8.0, react@>=18:
+react@*, "react@^16.3.0 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17 || ^18", react@^18.0.0, react@^18.3.1, "react@>= 16", react@>=16, react@>=16.3.0, react@>=16.8, react@>=16.8.0, react@>=18:
   version "18.3.1"
   resolved "https://registry.npmjs.org/react/-/react-18.3.1.tgz"
   integrity sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==
