@@ -232,8 +232,6 @@ const CheckoutPage = () => {
 
         {/* Delivery Address Section */}
 
-       
-
         {/* carosuel address */}
         {user?.address === undefined ? (
           <div className="w-full flex items-center justify-center">
@@ -331,7 +329,11 @@ const CheckoutPage = () => {
         </div>
         <button
           className="w-full py-3 bg-blue-600 text-white rounded-lg font-bold"
-          onClick={() => setPlaceOrderConfirmation(true)}
+          onClick={
+            paymentMethod === "Bkash"
+              ? () => setShowBkashModal(true)
+              : () => setPlaceOrderConfirmation(true)
+          }
         >
           Confirm Order
         </button>
