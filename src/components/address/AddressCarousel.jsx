@@ -5,6 +5,8 @@ export default function AddressCarousel({ addressList, setSelectedAddress }) {
   // State to track the selected address key
   const [selectedKey, setSelectedKey] = useState(null);
 
+  console.log(addressList)
+
   return (
     <div>
       <h1 className="font-semibold text-lg">Select delivery address</h1>
@@ -15,11 +17,15 @@ export default function AddressCarousel({ addressList, setSelectedAddress }) {
         onSwiper={(swiper) => console.log(swiper)}
       >
         {Object.entries(addressList).map(([key, value]) => {
-          const isSelected = selectedKey === key; // Check if this slide is selected
+          const isSelected = selectedKey === key;
 
-          return (
+          return value.address !== undefined ? (
             <SwiperSlide
-              className={`cursor-pointer rounded-md   px-2 py-3 ${isSelected ? 'border-2 rounded-md  h-full border-blue-500' : ' rounded-md border'}`} 
+              className={`cursor-pointer rounded-md   px-2 py-3 ${
+                isSelected
+                  ? "border-2 rounded-md  h-full border-blue-500"
+                  : " rounded-md border"
+              }`}
               key={key}
               onClick={() => {
                 setSelectedAddress(value.address);
@@ -31,7 +37,7 @@ export default function AddressCarousel({ addressList, setSelectedAddress }) {
                 <p>Address: {value.address}</p>
               </div>
             </SwiperSlide>
-          );
+          ) : null;
         })}
       </Swiper>
     </div>
