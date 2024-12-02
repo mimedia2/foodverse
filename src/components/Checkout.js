@@ -10,6 +10,7 @@ import { useCartContext } from "../contexts/CartContext";
 import { useSocket } from "../contexts/SocketIo";
 import { useAuth } from "../contexts/AuthContext";
 import Cookies from "js-cookie";
+import Loading from "./Loading";
 
 const CheckoutPage = () => {
   const location = useLocation();
@@ -22,8 +23,13 @@ const CheckoutPage = () => {
   // console.log(passedSubtotal);
 
   const { cartTotal, discount, addonTotal } = useCartContext();
+  const [loadingAddress, setLoadingAddress] = useState(true);
 
   const { user } = useAuth();
+
+  useEffect(() => {
+    setLoadingAddress(false);
+  }, [user]);
 
   const [tip, setTip] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
@@ -221,70 +227,76 @@ const CheckoutPage = () => {
         </section>
 
         {/* Delivery Address Section */}
-        <section className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Delivery Address</h3>
-            <Link to="/AddressManager">
-              <h2 className="text-blue-600 font-bold">Edit Address</h2>
-            </Link>
+        {loadingAddress ? (
+          <div className="w-full flex items-center justify-center">
+            <Loading />
           </div>
-          <div className="flex space-x-4">
-            <button
-              className={`flex-1 p-3 border ${
-                selectedAddress === "home"
-                  ? "border-blue-600"
-                  : "border-gray-300"
-              } rounded-lg flex items-center`}
-              onClick={() => {
-                user?.address.home.address !== undefined
-                  ? setSelectedAddress(user?.address.home.address)
-                  : toast.error("address is not set.");
-              }}
-            >
-              <p className="ml-2">Home</p>
-            </button>
-            <button
-              className={`flex-1 p-3 border ${
-                selectedAddress === "current"
-                  ? "border-blue-600"
-                  : "border-gray-300"
-              } rounded-lg flex items-center`}
-              onClick={() => {
-                user?.address.office.address !== undefined
-                  ? setSelectedAddress(user?.address.office.address)
-                  : toast.error("address is not set.");
-              }}
-            >
-              <p className="ml-2">Current</p>
-            </button>
+        ) : (
+          <section className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Delivery Address</h3>
+              <Link to="/AddressManager">
+                <h2 className="text-blue-600 font-bold">Edit Address</h2>
+              </Link>
+            </div>
+            <div className="flex space-x-4">
+              <button
+                className={`flex-1 p-3 border ${
+                  selectedAddress === "home"
+                    ? "border-blue-600"
+                    : "border-gray-300"
+                } rounded-lg flex items-center`}
+                onClick={() => {
+                  user?.address.home.address !== undefined
+                    ? setSelectedAddress(user?.address.home.address)
+                    : toast.error("address is not set.");
+                }}
+              >
+                <p className="ml-2">Home</p>
+              </button>
+              <button
+                className={`flex-1 p-3 border ${
+                  selectedAddress === "current"
+                    ? "border-blue-600"
+                    : "border-gray-300"
+                } rounded-lg flex items-center`}
+                onClick={() => {
+                  user?.address.office.address !== undefined
+                    ? setSelectedAddress(user?.address.office.address)
+                    : toast.error("address is not set.");
+                }}
+              >
+                <p className="ml-2">Current</p>
+              </button>
 
-            <button
-              className={`flex-1 p-3 border ${
-                selectedAddress === "current"
-                  ? "border-blue-600"
-                  : "border-gray-300"
-              } rounded-lg flex items-center`}
-              onClick={() => {
-                user?.address.others.address !== undefined
-                  ? setSelectedAddress(user?.address.others.address)
-                  : toast.error("adress is not set.");
-              }}
-            >
-              <p className="ml-2">others</p>
-            </button>
-          </div>
+              <button
+                className={`flex-1 p-3 border ${
+                  selectedAddress === "current"
+                    ? "border-blue-600"
+                    : "border-gray-300"
+                } rounded-lg flex items-center`}
+                onClick={() => {
+                  user?.address.others.address !== undefined
+                    ? setSelectedAddress(user?.address.others.address)
+                    : toast.error("adress is not set.");
+                }}
+              >
+                <p className="ml-2">others</p>
+              </button>
+            </div>
 
-          <div>
-            {selectedAddress !== undefined ? (
-              <>
-                <h1 className="text-lg font-semibold">Selected location</h1>
-                <span>{selectedAddress}</span>
+            <div>
+              {selectedAddress !== undefined ? (
+                <>
+                  <h1 className="text-lg font-semibold">Selected location</h1>
+                  <span>{selectedAddress}</span>
 
-                {console.log(user?.address)}
-              </>
-            ) : null}
-          </div>
-        </section>
+                  {/* { // console.log(user?.address)} */}
+                </>
+              ) : null}
+            </div>
+          </section>
+        )}
 
         {/* Tip Section */}
         <section className="space-y-2">

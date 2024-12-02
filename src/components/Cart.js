@@ -35,11 +35,9 @@ function Cart() {
     async function handleFetchAlsoLike() {
       let matchingList = [];
 
-      cart.map((item, index) => {
+      cart.map((item) => {
         matchingList.push(item._id);
       });
-
-      
 
       setLoading(true);
       try {
@@ -49,14 +47,13 @@ function Cart() {
             method: "POST",
             headers: {
               "x-auth-token": authToken,
-              "Content-Type": "application/json",  
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              excludingItemList: matchingList, 
+              excludingItemList: matchingList,
             }),
           }
         );
-        
 
         const result = await apiResponse.json();
         if (result?.success) {
@@ -84,9 +81,9 @@ function Cart() {
       {/* Cart Items */}
       <div className="pt-20 space-y-4 px-4 ">
         {cart.length > 0 &&
-          cart?.map((item) => (
+          cart?.map((item, index) => (
             <div
-              key={item.id}
+              key={index}
               className="flex items-center justify-between bg-white p-3 rounded-lg shadow-md relative text-red-500"
             >
               <button

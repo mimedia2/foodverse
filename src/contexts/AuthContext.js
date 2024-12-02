@@ -41,12 +41,13 @@ export const AuthProvider = ({ children }) => {
           }
         );
 
-       // console.log(await response.data);
+        // console.log(await response.data);
 
         const data = await response.data;
 
         if (data.success) {
           setUser(data.user);
+          console.log(user);
         }
       } catch (error) {
         if (error.response) {
