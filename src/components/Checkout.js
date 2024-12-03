@@ -24,14 +24,39 @@ const CheckoutPage = () => {
   // console.log(passedSubtotal);
 
   const { cartTotal, discount, addonTotal } = useCartContext();
-  const [loadingAddress, setLoadingAddress] = useState(true);
-  const [addressList, setAddressList] = useState([]);
+
+  const [loadingAddress, setLoadingAddress] = useState(null);
+  const [addressList, setAddressList] = useState(null);
 
   const { user } = useAuth();
 
   useEffect(() => {
-    setLoadingAddress(false);
-  }, [user]);
+    async function getDeliveryLocationList() {
+      setLoadingAddress(true);
+      const id = Cookies.get("id");
+      try {
+        const { data } = await axios.get(
+          `${api_path_url}/user/delivery/location?id=${id}`,
+          {
+            headers: {
+              "x-auth-token": authToken,
+            },
+          }
+        );
+
+        console.log(data);
+
+        if (data.success) {
+          setAddressList(data.address);
+          setLoadingAddress(false);
+        }
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
+
+    getDeliveryLocationList();
+  }, []);
 
   const [tip, setTip] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
@@ -233,13 +258,13 @@ const CheckoutPage = () => {
         {/* Delivery Address Section */}
 
         {/* carosuel address */}
-        {user?.address === undefined ? (
+        {addressList === null ? (
           <div className="w-full flex items-center justify-center">
             <Loading />
           </div>
         ) : (
           <AddressCarousel
-            addressList={user?.address}
+            addressList={addressList}
             setSelectedAddress={setSelectedAddress}
           />
         )}

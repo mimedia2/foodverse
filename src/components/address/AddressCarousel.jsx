@@ -5,12 +5,14 @@ export default function AddressCarousel({ addressList, setSelectedAddress }) {
   // State to track the selected address key
   const [selectedKey, setSelectedKey] = useState(null);
 
-  console.log(addressList)
+  // console.log(addressList)
 
   return (
     <div>
       <h1 className="font-semibold text-lg">Select delivery address</h1>
       <Swiper
+        navigation
+        pagination={{ clickable: true }}
         spaceBetween={50}
         slidesPerView={1}
         onSlideChange={() => console.log("slide change")}

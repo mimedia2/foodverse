@@ -24,12 +24,11 @@ const CartProvider = ({ children }) => {
 
   useEffect(() => {
     const total = cart.reduce((total, item, index) => {
-      return (total =
-        total + item.offerPrice * item.quantity + item.addonValue);
+      return (total = total + item.offerPrice * item.quantity);
     }, 0);
 
     const addon = cart.reduce((total, item, index) => {
-      return (total += item.addonValue);
+      return (total += item.addonValue || 0);
     }, 0);
 
     setAddonTotal(addon);
