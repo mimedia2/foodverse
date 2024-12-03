@@ -115,7 +115,7 @@ const CheckoutPage = () => {
     setIsProcessing(true);
     try {
       const orderData = {
-        tip,
+        tip: tip,
         paymentMethod,
         totalAmount: cartTotal + tip + deliveryCharge,
         restaurantId: cart[0].restaurantId,
@@ -123,7 +123,7 @@ const CheckoutPage = () => {
         items: [...cart],
         deliveryAmount: deliveryCharge,
         dropLocation: selectedAddress,
-        restaurantLocation: "unknown location",
+        restaurantLocation: null,
         customerMessage: instructions,
         discount,
         addonTotal,
