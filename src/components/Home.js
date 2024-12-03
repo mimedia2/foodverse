@@ -18,7 +18,7 @@ function Home() {
     { name: "Burger", img: "./img/burgerR.png" },
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  
   const ads = [
     { src: './img/Add1.jpg', alt: 'Ad 1' },
     { src: './img/Add2.jpg', alt: 'Ad 2' },
@@ -26,8 +26,14 @@ function Home() {
     { src: './img/Add2.jpg', alt: 'Ad 4' },
   ];
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Variables to track swipe
+  let touchStartX = 0;
+  let touchEndX = 0;
+
   const nextSlide = () => {
-    setCurrentIndex((currentIndex + 1) % ads.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % ads.length);
   };
 
   const prevSlide = () => {
@@ -35,14 +41,33 @@ function Home() {
   };
 
   // Automatically change the slide every 3 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 3000); // 3000ms = 3 seconds
+useEffect(() => {
+  const interval = setInterval(() => {
+    nextSlide(); // Always move to the next slide
+  }, 3000); // 3000ms = 3 seconds
 
-    return () => clearInterval(interval); // Clean up the interval on component unmount
-  }, [currentIndex]);
+  return () => clearInterval(interval); // Cleanup on unmount
+}, []);
 
+  // Handle touch events
+  const handleTouchStart = (e) => {
+    touchStartX = e.touches[0].clientX; // Starting X position
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX = e.touches[0].clientX; // Updating X position
+  };
+
+  const handleTouchEnd = () => {
+    const swipeThreshold = 50; // Minimum swipe distance
+    const swipeDistance = touchStartX - touchEndX;
+  
+    if (swipeDistance > swipeThreshold) {
+      nextSlide(); // Swipe left for the next slide
+    } else if (swipeDistance < -swipeThreshold) {
+      prevSlide(); // Swipe right for the previous slide
+    }
+  };
  
   return (
     <>
@@ -85,8 +110,13 @@ function Home() {
         
         <div>  
         {/* Slider section */}
-        <section className="p-3">
-          <div className="relative w-full max-w-lg mx-auto mt-28 overflow-hidden rounded-lg shadow-lg">
+        <section className="px-3 py-1">
+          <div 
+            className="relative w-full max-w-lg mx-auto mt-28 overflow-hidden rounded-lg shadow-lg"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div
               className="flex transition-transform duration-500"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -98,25 +128,12 @@ function Home() {
               ))}
             </div>
 
-            <button
-              onClick={prevSlide}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-80 text-white p-2 rounded-full"
-            >
-              &#10094;
-            </button>
-
-            <button
-              onClick={nextSlide}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-80 text-white p-2 rounded-full"
-            >
-              &#10095;
-            </button>
           </div>
         </section>
 
         {/* Popular cuisines */}
         <section className="p-3">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-3">
             <h2 className="text-xl font-semibold text-purple-600">Popular Cuisines</h2>
             <Link to="" className="text-blue-600 font-semibold hover:underline">
               See All
