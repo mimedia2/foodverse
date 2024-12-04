@@ -16,6 +16,7 @@ import AddressCarousel from "./address/AddressCarousel";
 const CheckoutPage = () => {
   const location = useLocation();
 
+
   //payment status
   const [paymentStatus, setPaymentStatus] = useState(null);
 
@@ -67,6 +68,9 @@ const CheckoutPage = () => {
   const [showBkashModal, setShowBkashModal] = useState(false); // Modal for Bkash
   const [isProcessing, setIsProcessing] = useState(false); // Processing state
 
+  const [totalAmount, setTotalAmount] = useState(passedSubtotal); // মোট এমাউন্ট
+
+
   const [placeOrderConfirmation, setPlaceOrderConfirmation] = useState(false);
 
   // cart
@@ -91,25 +95,54 @@ const CheckoutPage = () => {
   //   setTotalAmount(passedSubtotal); // Ensure totalAmount is updated with passedSubtotal initially
   // }, [passedSubtotal]);
 
-  const handlePlaceOrder = () => {
+
+  const handlePlaceOrder = async () => {
     if (selectedAddress === undefined || selectedAddress === "") {
       toast.error("please select delivery location");
       return;
     }
-
+    // Check if payment method is Bkash
     if (paymentMethod === "Bkash") {
-      setShowBkashModal(true); // Show Bkash modal if Bkash is selected
-      return;
+      try {
+        setIsProcessing(true); // Show processing state
+  
+        // Prepare data for bKash payment
+        const bkashData = {
+          amount: totalAmount + tip + deliveryCharge, // Total amount including tip and delivery
+        };
+  
+        // Call backend API to get bKash payment link
+        const bkashResponse = await axios.post(
+          `${api_path_url}/bkash-payment`,
+          bkashData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "x-auth-token": authToken, // Auth token for security
+            },
+          }
+        );
+  
+        if (bkashResponse.data.success) {
+          // Redirect to the bKash payment URL
+          const bkashLink = bkashResponse.data.bkashURL; // Backend should return this
+          window.location.href = bkashLink; // Redirect user to bKash website
+        } else {
+          toast.error("Failed to initiate Bkash payment."); // Show error message
+        }
+      } catch (error) {
+        console.error("Bkash payment error:", error); // Log error for debugging
+        toast.error("Something went wrong with Bkash payment."); // Show error to user
+      } finally {
+        setIsProcessing(false); // Stop processing state
+      }
+
     } else {
-      placeOrder(); // Directly place order for Cash on Delivery
+      placeOrder(); // Place order directly for other methods
     }
   };
 
-  // Define handleTipChange to update the tip amount
-  const handleTipChange = (amount) => {
-    setTip(amount);
-  };
-
+  // ফাংশন: অর্ডার প্রসেসিং
   const placeOrder = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     setIsProcessing(true);
@@ -129,6 +162,7 @@ const CheckoutPage = () => {
         addonTotal,
       };
 
+
       const response = await axios.post(
         `${api_path_url}/order/create`,
         { data: orderData },
@@ -139,6 +173,7 @@ const CheckoutPage = () => {
           },
         }
       );
+
 
       if (response.data.success) {
         navigate("/");
@@ -157,6 +192,7 @@ const CheckoutPage = () => {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsProcessing(false);
+
       setShowBkashModal(false);
     }
   };
@@ -233,10 +269,17 @@ const CheckoutPage = () => {
       setShowBkashModal(false);
     }
   };
-
+  
+// ফাংশন: টিপ পরিবর্তন করা
+  const handleTipChange = (amount) => {
+    setTip(amount);
+  };
   useEffect(() => {
     console.log(selectedAddress);
   }, [selectedAddress]);
+
+    }
+  };
 
   return (
     <div className="relative">
@@ -364,6 +407,7 @@ const CheckoutPage = () => {
         </button>
       </section>
 
+
       {/* place order confirmation */}
       {placeOrderConfirmation && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
@@ -421,6 +465,7 @@ const CheckoutPage = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

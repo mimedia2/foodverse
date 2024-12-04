@@ -27,12 +27,18 @@ import CuisineFilter from "./pages/CuisineFilter.jsx";
 import Header from "./components/Header.jsx";
 import Restaurant from "./pages/Restaurant.jsx";
 import CategoryFilter from "./pages/CategoryFilter.jsx";
+
 import Checkout from "./components/Checkout.js";
 import { SocketProvider } from "./contexts/SocketIo.js";
 import { Helmet } from "react-helmet";
 import 'swiper/css';
 
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+
+
+import Notification from "./components/Notification.js";
+import SetAddressManager from "./components/SetAddressManager.js";
+
 
 function App() {
   return (
@@ -134,6 +140,7 @@ function App() {
                   }
                 />
 
+
                 <Route
                   path="/category/:category"
                   element={
@@ -197,12 +204,20 @@ function App() {
                   path="/checkout"
                   element={<PrivateRoute element={Checkout} />}
                 />
+                <Route
+                path="/notification"
+                element={<PrivateRoute element={Notification} />}
+              />
+              <Route
+                path="/setaddressmanager"
+                element={<PrivateRoute element={SetAddressManager} />}
+              />
               </Routes>
             </div>
           </Router>
         </CartProvider>
       </AuthProvider>
-    </SocketProvider>
+    </SocketProvider>           
   );
 }
 

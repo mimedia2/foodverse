@@ -74,7 +74,7 @@ const MainProfile = () => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center min-h-screen p-4">
+    <div className="bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center min-h-screen p-2">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-sm">
         {/* Profile Header */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 py-6 px-6">
@@ -123,9 +123,9 @@ const MainProfile = () => {
         </div>
 
         {/* Profile Details */}
-        <div className="p-6 space-y-6">
+        <div className="p-2 space-y-2">
           {/* Birthday */}
-          <div className="flex items-center space-x-4 rounded-lg shadow-md p-2">
+          <div className="flex items-center space-x-2 rounded-lg shadow-md p-2">
             <div className="bg-purple-100 p-2 rounded-full">
               <svg
                 className="h-6 w-6 text-purple-500"
@@ -147,7 +147,7 @@ const MainProfile = () => {
           </div>
 
           {/* Phone Number */}
-          <div className="flex items-center space-x-4 rounded-lg shadow-md p-2">
+          <div className="flex items-center space-x-2 rounded-lg shadow-md p-2">
             <div className="bg-purple-100 p-2 rounded-full">
               <svg
                 className="h-6 w-6 text-purple-500"
@@ -165,11 +165,11 @@ const MainProfile = () => {
               </svg>
             </div>
             <span className="text-gray-700 font-semibold">Phone Number</span>
-            <span className="ml-auto text-gray-500">{user?.phoneNumber}</span>
+            <span className=" text-gray-500">{user?.phoneNumber}</span>
           </div>
 
           {/* Email */}
-          <div className="flex items-center space-x-4 rounded-lg shadow-md p-2">
+          <div className="flex items-center space-x-2 rounded-lg shadow-md p-2">
             <div className="bg-purple-100 p-2 rounded-full">
               <svg
                 className="h-6 w-6 text-purple-500"
@@ -187,19 +187,39 @@ const MainProfile = () => {
               </svg>
             </div>
             <span className="text-gray-700 font-semibold">Email</span>
-            <span className="ml-auto text-gray-500">{user?.email}</span>
+            <span className=" text-gray-500">{user?.email}</span>
           </div>
 
-          {/* Password */}
+           {/* Password */}
+           <div className="flex items-center space-x-2 rounded-lg shadow-md p-2">
+            <div className="bg-purple-100 p-2 rounded-full">
+              <svg
+                className="h-6 w-6 text-purple-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M3 8l7.71 5.03a1.998 1.998 0 002.58 0L21 8M21 8v10a2 2 0 01-2 2H5a2 2 0 01-2-2V8m18 0l-9-6-9 6"
+                ></path>
+              </svg>
+            </div>
+            <span className="text-gray-700 font-semibold">Password</span>
+            <span className=" text-gray-500" >******</span>
+          </div>
         </div>
 
         {/* Edit Profile Button */}
-        <div className="p-6">
+        <div className="p-2">
           <Link
             to="/"
             className="w-full block text-center bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 rounded-full shadow-md hover:from-purple-700 hover:to-blue-700 transition duration-300 ease-in-out"
           >
-            See dashboard
+            Home
           </Link>
         </div>
       </div>

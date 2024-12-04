@@ -48,7 +48,14 @@ const AddressManager = () => {
             arr.push(address[key]);
           }
           setAddresses(arr);
+
           setLoading(false);
+
+          //Address save localStorage
+          if (arr.length > 0) {
+            localStorage.setItem("userAddress", JSON.stringify(arr[0])); 
+          }
+
         }
       } catch (error) {
         setLoading(false);
@@ -234,6 +241,9 @@ const AddressManager = () => {
   // useEffect(() => {
   //   console.log(addresses);
   // }, [addresses]);
+
+       
+  
 
   return (
     <div className="container mx-auto p-4">
