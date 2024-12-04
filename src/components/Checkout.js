@@ -278,7 +278,7 @@ const CheckoutPage = () => {
     console.log(selectedAddress);
   }, [selectedAddress]);
 
-    }
+  
   };
 
   return (
