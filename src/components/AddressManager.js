@@ -3,6 +3,8 @@ import { LoadScript, GoogleMap } from "@react-google-maps/api";
 import axios from "axios"; // Import axios
 import { api_path_url, authToken } from "../secret";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
+import Loading from "./Loading";
 
 const AddressManager = () => {
   const [addresses, setAddresses] = useState([]);
@@ -17,16 +19,20 @@ const AddressManager = () => {
   });
   const mapRef = useRef(null);
 
+  // loading
+  const [loading, setLoading] = useState(null);
+
   const mapStyles = { height: "300px", width: "100%" };
 
   // Fetch addresses from backend when the component mounts
   useEffect(() => {
     const fetchAddresses = async () => {
-      const user = localStorage.getItem("user");
+      const id = Cookies.get("id");
+      setLoading(true);
       try {
-        if (user) {
+        if (id) {
           const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/user/get-address?id=67015af53e0edfa744a65514`,
+            `${process.env.REACT_APP_API_URL}/user/get-address?id=${id}`,
             {
               headers: {
                 "x-auth-token": process.env.REACT_APP_API_TOKEN,
@@ -42,21 +48,26 @@ const AddressManager = () => {
             arr.push(address[key]);
           }
           setAddresses(arr);
+
+          setLoading(false);
+
           //Address save localStorage
           if (arr.length > 0) {
             localStorage.setItem("userAddress", JSON.stringify(arr[0])); 
           }
+
         }
       } catch (error) {
+        setLoading(false);
         console.error("Error fetching addresses", error);
       }
     };
     fetchAddresses();
   }, []);
 
-  useEffect(() => {
-    console.log(newAddress);
-  }, [newAddress]);
+  // useEffect(() => {
+  //   console.log(newAddress);
+  // }, [newAddress]);
 
   const onMapLoad = (mapInstance) => {
     mapRef.current = mapInstance;
@@ -106,10 +117,9 @@ const AddressManager = () => {
   // API request to update address
   const updateUserAddress = async (updatedAddresses) => {
     try {
-      const userId = JSON.parse(localStorage.getItem("user"));
-      const id = userId.id;
+      const id = Cookies.get("id");
 
-      console.log(newAddress);
+      //  console.log(newAddress);
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/user/update-address?id=${id}`,
         {
@@ -228,9 +238,9 @@ const AddressManager = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(addresses);
-  }, [addresses]);
+  // useEffect(() => {
+  //   console.log(addresses);
+  // }, [addresses]);
 
        
   
@@ -243,96 +253,104 @@ const AddressManager = () => {
       {/* Render saved addresses */}
       <div>
         <ul>
-          {addresses &&
-            addresses?.map((addr) => {
+          {loading ? (
+            <div className="w-full flex items-center justify-center">
+              <Loading />
+            </div>
+          ) : (
+            addresses?.map((addr, index) => {
               return addr.label !== undefined ? (
                 <>
-                <div className="border-2 my-4 rounded-md ">
-                  <div className="flex flex-row justify-center items-center p-2 text-blue-600 bg-slate-100 ">
-                    <h1 className="font-bold">{addr?.label}</h1>
-                  </div>
-                  <li className="flex flex-col justify-between items-center p-3  border rounded-md shadow-md ">
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <svg
-                          className="h-5 w-5 text-purple-700"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                  <div className="border-2 my-4 rounded-md " key={index}>
+                    <div className="flex flex-row justify-center items-center p-2 text-blue-600 bg-slate-100 ">
+                      <h1 className="font-bold">{addr?.label}</h1>
+                    </div>
+                    <li className="flex flex-col justify-between items-center p-3  border rounded-md shadow-md ">
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <svg
+                            className="h-5 w-5 text-purple-700"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
 
-                        <p className="font-bold text-blue-700">Address:</p>
-                        <p>{addr?.address}</p>
-                      </div>
+                          <p className="font-bold text-blue-700">Address:</p>
+                          <p>{addr?.address}</p>
+                        </div>
 
-                      <div className="flex items-center space-x-2">
-                        <svg
-                          className="h-5 w-5 text-purple-700"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M1.5 4.5a3 3 0 0 1 3-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 0 1-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 0 0 6.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 0 1 1.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 0 1-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <p className="font-bold text-blue-700">Phone:</p>
-                        <p>{addr?.phoneNumber}</p>
-                      </div>
+                        <div className="flex items-center space-x-2">
+                          <svg
+                            className="h-5 w-5 text-purple-700"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M1.5 4.5a3 3 0 0 1 3-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 0 1-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 0 0 6.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 0 1 1.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 0 1-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <p className="font-bold text-blue-700">Phone:</p>
+                          <p>{addr?.phoneNumber}</p>
+                        </div>
 
-                      <div className="flex items-center space-x-2">
-                        {/* {renderIcon(address.label)}
+                        <div className="flex items-center space-x-2">
+                          {/* {renderIcon(address.label)}
                   <p className="font-bold text-blue-700">{address.label}:</p> */}
-                        <p>
-                          {/* {address.address.length > 20
+                          <p>
+                            {/* {address.address.length > 20
                       ? `${address.address.substring(0, 20)}...`
                       : address.address} */}
-                        </p>
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-row space-x-44 mt-2">
-                      <button
-                        className="text-white bg-blue-500 rounded-sm font-bold px-2 "
-                        onClick={() => {
-                          setShowAddressForm(true);
-                          setNewAddress(() => ({ ...addr }));
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="text-white bg-red-500 rounded-sm font-bold px-2"
-                        onClick={() => deleteAddress(addr?.label)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </li>
+                      <div className="flex flex-row space-x-44 mt-2">
+                        <button
+                          className="text-white bg-blue-500 rounded-sm font-bold px-2 "
+                          onClick={() => {
+                            setShowAddressForm(true);
+                            setNewAddress(() => ({ ...addr }));
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-white bg-red-500 rounded-sm font-bold px-2"
+                          onClick={() => deleteAddress(addr?.label)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </li>
                   </div>
                 </>
               ) : null;
-            })}
+            })
+          )}
         </ul>
         <div className="text-center">
-        <button
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 "
-          onClick={() => setShowAddressForm(true)}
-        >
-          + Add Another Address
-        </button>
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 "
+            onClick={() => setShowAddressForm(true)}
+          >
+            + Add Another Address
+          </button>
         </div>
       </div>
 
       {showAddressForm && (
-        <form onSubmit={saveAddress} className="border-2 p-2 my-4 rounded-md bg-gray-100 ">
+        <form
+          onSubmit={saveAddress}
+          className="border-2 p-2 my-4 rounded-md bg-gray-100 "
+        >
           <label className="block text-sm mb-2">Label</label>
           <div className="flex space-x-4 mb-4">
             <button
@@ -403,7 +421,9 @@ const AddressManager = () => {
             required
           />
           <div className="text-center">
-            <button className="font-bold text-white bg-blue-500 p-2 rounded-md">Find location</button>
+            <button className="font-bold text-white bg-blue-500 p-2 rounded-md">
+              Find location
+            </button>
           </div>
           {showAddressForm && (
             <LoadScript googleMapsApiKey="AIzaSyBbE_BV395ODtFKApBX_oK0KselqP0Tjcs">
@@ -437,4 +457,3 @@ const AddressManager = () => {
 };
 
 export default AddressManager;
-

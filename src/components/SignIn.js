@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext"; // Import AuthContext
 import Loading from "./Loading";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 const SignInForm = () => {
   const [formData, setFormData] = useState({
@@ -66,6 +67,7 @@ const SignInForm = () => {
 
         if (data?.success) {
           localStorage.setItem("user", JSON.stringify(data));
+          Cookies.set("id", data.id);
           setLoading(false);
           navigate("/");
           toast.success(data?.message);

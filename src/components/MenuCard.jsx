@@ -5,12 +5,18 @@ import { HiOutlineHeart } from "react-icons/hi";
 export default function MenuCard({ detail }) {
   const [showModal, setShowModal] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [addons, setAddons] = useState(detail?.addons);
+  const [addonValue, setAddonValue] = useState(0);
+
+  const [addonList, setAddonList] = useState([]);
+
+  // console.log(detail);
 
   const [price, setPrice] = useState(quantity * detail?.offerPrice);
 
   useEffect(() => {
-    setPrice(quantity * detail?.offerPrice);
-  }, [quantity]);
+    setPrice(quantity * detail?.offerPrice + addonValue);
+  }, [quantity, addonValue]);
 
   const { handleAddToCart } = useCartContext();
 
@@ -34,7 +40,7 @@ export default function MenuCard({ detail }) {
           className="w-full h-32 sm:h-48 md:h-56 lg:h-72 object-cover rounded-md"
         />
         {/* Favourite */}
-          <HiOutlineHeart className="size-5 text-gray-500 absolute right-2 top-2 rounded-md"/>
+        <HiOutlineHeart className="size-5 text-gray-500 absolute right-2 top-2 rounded-md" />
         <h3 className="text-sm font-semibold text-gray-800 mx-2 mt-2">
           {detail?.name}
         </h3>
@@ -98,9 +104,7 @@ export default function MenuCard({ detail }) {
                 <h3 className="text-lg font-semibold text-gray-800 pl-2">
                   {detail?.name}
                 </h3>
-                <p className="text-blue-400 font-semibold pl-2 py-2 text-sm">
-                  
-                </p>
+                <p className="text-blue-400 font-semibold pl-2 py-2 text-sm"></p>
                 <div className="flex items-center space-x-2 pl-2">
                   <svg
                     className="h-5 w-5 text-purple-500"
@@ -125,6 +129,17 @@ export default function MenuCard({ detail }) {
             <div className="flex items-center justify-between mt-4 border-t-2 pt-2 ">
               <p className="font-semibold mt-2">Total Amount:</p>
               <p className="text-gray-800 font-bold">TK {price}</p>
+            </div>
+
+            {/* addons */}
+            <div>
+              <MenuAddons
+                addons={addons}
+                setAddonList={setAddonList}
+                addonList={addonList}
+                addonValue={addonValue}
+                setAddonValue={setAddonValue}
+              />
             </div>
 
             <div className="mt-4 flex flex-row items-center">
@@ -153,7 +168,12 @@ export default function MenuCard({ detail }) {
               <button
                 className="bg-blue-500 w-full text-white py-2 rounded-lg"
                 onClick={() => {
-                  handleAddToCart({ ...detail, quantity: quantity });
+                  handleAddToCart({
+                    ...detail,
+                    quantity: quantity,
+                    addons: addonList,
+                    addonValue: addonValue,
+                  });
                   setShowModal(false);
                 }}
               >
@@ -166,3 +186,67 @@ export default function MenuCard({ detail }) {
     </>
   );
 }
+
+const MenuAddons = ({
+  addons,
+  addonList,
+  setAddonList,
+  addonValue,
+  setAddonValue,
+}) => {
+  function handleOnchange(e, item) {
+    console.log(e.target.checked);
+
+    // addonsList.push(e.target);
+
+    if (e.target.checked) {
+      setAddonList((prev) => [...prev, item]);
+      setAddonValue((prev) => prev + item.price);
+    } else {
+      const itemId = item._id.toString();
+      const filterItem = addonList.filter((item) => {
+        return item._id !== itemId;
+      });
+
+      setAddonValue((prev) => prev - item.price);
+      setAddonList(filterItem);
+    }
+
+    //  console.log(addonList);
+  }
+
+  // useEffect(() => {
+  //   console.log(addonValue);
+  // }, [addonValue]);
+
+  return (
+    <>
+      <h1>Addons</h1>
+      {addons ? (
+        <>
+          {addons.map((item, index) => {
+            if (item.status) {
+              return (
+                <div
+                  key={index}
+                  className="flex items-center justify-between border py-4  px-3"
+                >
+                  <div>{item.title}</div>
+                  <div>BDT {item.price}</div>
+                  <div>
+                    <input
+                      type="checkbox"
+                      name="selectedAddon"
+                      id="selectedAddons"
+                      onChange={(e) => handleOnchange(e, item)}
+                    />
+                  </div>
+                </div>
+              );
+            }
+          })}
+        </>
+      ) : null}
+    </>
+  );
+};

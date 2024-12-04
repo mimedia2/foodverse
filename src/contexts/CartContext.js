@@ -16,10 +16,22 @@ const CartProvider = ({ children }) => {
   // total for cart
   const [cartTotal, setCartTotal] = useState(0);
 
+  // addons
+  const [addonTotal, setAddonTotal] = useState(0);
+
+  // discount
+  const [discount, setDiscount] = useState(20);
+
   useEffect(() => {
     const total = cart.reduce((total, item, index) => {
       return (total = total + item.offerPrice * item.quantity);
     }, 0);
+
+    const addon = cart.reduce((total, item, index) => {
+      return (total += item.addonValue || 0);
+    }, 0);
+
+    setAddonTotal(addon);
 
     setCartTotal(total);
   }, [cart]);
@@ -31,7 +43,20 @@ const CartProvider = ({ children }) => {
   // Add new item to cart
   function handleAddToCart(item) {
     const existingRestaurant = localStorage.getItem("cartRest");
-    console.log("item is: ", item)
+    // console.log("item is: ", item);
+
+    const itemId = item._id;
+    // console.log(itemId)
+
+    const isExist = cart.findIndex((item, index) => {
+      return item._id === itemId;
+    });
+    if (isExist !== -1) {
+      toast.error("item already in cart.");
+      return;
+    }
+
+    // console.log(isExist);
 
     // Check if the cart already has items from a different restaurant
     if (existingRestaurant && existingRestaurant !== item.restaurantId) {
@@ -101,6 +126,8 @@ const CartProvider = ({ children }) => {
         handleDecreaseQuantity,
         cartTotal,
         handleRemoveItem,
+        addonTotal,
+        discount,
       }}
     >
       {children}
